@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import bcrypt, { getSalt } from "bcryptjs";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new Schema(
   {
-    userName: {
+    username: {
       type: String,
       required: [true, "Please provide a username"],
       unique: true,
@@ -21,7 +21,6 @@ const UserSchema = new Schema(
     password: {
       type: String,
       required: [true, "Please provide a Password"],
-      unique: true,
       trim: true,
       minLength: [6, "Username must be at least 6 characters long"],
     },
@@ -37,12 +36,18 @@ const UserSchema = new Schema(
 //Hash Pass before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return;
   }
 
-  const salt = await bcrypt.getSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  try {
+    const salt = await bcrypt.genSalt(10);  
+    this.password = await bcrypt.hash(this.password, salt);
+  
+  } catch (err) {
+    console.log(err);
+  }
 });
+
 
 //Compare password Method
 UserSchema.methods.matchPassword = async function (enteredPassword) {
