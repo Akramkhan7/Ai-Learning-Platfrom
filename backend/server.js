@@ -10,6 +10,8 @@ import errorHandler from './middleware/errorHandler.js';
 
 import authRoutes from './Routes/authRoutes.js';
 import documentRoutes from './Routes/documentRoutes.js';
+import flashcardRoutes from './Routes/flashcardRoutes.js';
+import aiRoutes from './Routes/aiRoutes.js'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,6 +36,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/flashcards', flashcardRoutes);
+app.use('/api/ai',aiRoutes)
 
 //Routes
 app.use(errorHandler);
