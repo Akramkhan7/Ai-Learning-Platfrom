@@ -201,7 +201,7 @@ export const deleteQuiz = async (req, res, next) => {
     await quiz.deleteOne();
     res.status(200).json({
         success : true,
-        message : 'Quiz deleted successfully'
+        message : 'Quiz deleted successfully',
     })
   } catch (err) {
     next(err);

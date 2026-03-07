@@ -13,6 +13,7 @@ import documentRoutes from './Routes/documentRoutes.js';
 import flashcardRoutes from './Routes/flashcardRoutes.js';
 import aiRoutes from './Routes/aiRoutes.js'
 import quizRoutes from './Routes/quizRoutes.js'
+import progressRoutes from './controller/progressController.js'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +41,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/ai',aiRoutes);
 app.use('/api/quizzes',quizRoutes)
+app.use('/api/progress',progressRoutes)
 
 //Routes
 app.use(errorHandler);

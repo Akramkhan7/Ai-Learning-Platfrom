@@ -2,7 +2,7 @@ import FlashCard from '../models/FlashCard';
 import Quiz from '../models/Quiz';
 import Document from '../models/Document';
 
-//get user leaning statistics
+//get user learning statistics
 //GET/api/progress/dashboard
 
 export const getDashboard = async(req, res, next) =>{
@@ -25,12 +25,56 @@ export const getDashboard = async(req, res, next) =>{
 
          flashcardSets.forEach(set =>{
             totalFlashcards += set.cards.length;
-         })
+            reviewedFlashcards + set.cards.filter(c => c.reviewCount > 0).length;
+            starredFlashcards += set.cards(c => c.isStarred).length;
+
+         });
+
 
          //get quiz statistics
+         const quizzes = await Quiz.find({userId, completedAt : {$ne : null}});
+        const avgScore = quizzes.length > 0 ? Math.round(quizzes.reduce((sum,q)=> sum + q.score) / quizzes.length) : 0;
 
-         const quizzes = await Quiz({userId, completedAt})
 
+        //recent activities
+        const recentDocument = await Document.find({userId})
+        .sort({lastAccessed : -1})
+        .limit(5)
+        .select('Title filename last accessed status');
+
+         const recentQuizzes = await Quiz.find({userId})
+         .sort({lastAccessed : -1})
+         .limit(5)
+         .populate('documentId', 'title')
+         .select('title score totalQuestions completedAt')
+
+         
+         //study streak
+         const studyStreak = Math.floor(Math.random() * 7) + 1;
+
+         res.status(200).json({
+            success : true,
+            data : {
+                overview : {
+                    totalDocuments,
+                    totalFlashcardSets,
+                    totalFlashcards,
+                    reviewedFlashcards,
+                    starredFlashcards,
+                    totalQuizzes,
+                    completeQuizzes,
+                    avgScore,
+                    studyStreak,
+
+                },
+                recentActivity : {
+                    document : recentDocument,
+                    quizzes : recentQuizzes,
+                }
+            }
+         });
+
+         
     }catch(err){
 
     }
