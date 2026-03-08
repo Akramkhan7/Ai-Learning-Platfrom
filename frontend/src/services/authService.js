@@ -10,7 +10,7 @@ const login = async (email, password) => {
 
     return response.data;
   } catch (err) {
-    throw err.response.data || { message: "An unknown error occurred" };
+    throw err.response?.data || { message: "An unknown error occurred" };
   }
 };
 
@@ -24,7 +24,7 @@ const register = async (username, email, password) => {
 
     return response.data;
   } catch (err) {
-    throw err.response.data || { message: "An unknown error occurred" };
+    throw err.response?.data || { message: "An unknown error occurred" };
   }
 };
 
@@ -33,40 +33,42 @@ const getProfile = async () => {
     const response = await axiosInstance.post(API_PATHS.AUTH.GET_PROFILE);
     return response.data;
   } catch (err) {
-    throw err.response.data || { message: "An unknown error occurred" };
+    throw err.response?.data || { message: "An unknown error occurred" };
   }
 };
 
 const updateProfile = async (userData) => {
   try {
     const response = await axiosInstance.post(
-      API_PATHS.AUTH.GET_PROFILE,
-      userData,
+      API_PATHS.AUTH.UPDATE_PROFILE,
+      userData
     );
+
+    return response.data;
   } catch (err) {
-    throw err.response.data || { message: "An unknown error occurred" };
+    throw err.response?.data || { message: "An unknown error occurred" };
   }
 };
 
-const changePassword = async (password) =>{
-    try{
-         const response = await axiosInstance.post(
-      API_PATHS.AUTH.GET_PROFILE,
-      password,
+const changePassword = async (password) => {
+  try {
+    const response = await axiosInstance.post(
+      API_PATHS.AUTH.CHANGE_PASSWORD,
+      password
     );
-    }catch(err){
-    throw err.response.data || { message: "An unknown error occurred" };
 
-    }
-}
-
+    return response.data;
+  } catch (err) {
+    throw err.response?.data || { message: "An unknown error occurred" };
+  }
+};
 
 const authService = {
-    login,
-    register,
-    getProfile,
-    updateProfile,
-    changePassword,
-}
+  login,
+  register,
+  getProfile,
+  updateProfile,
+  changePassword,
+};
 
 export default authService;
