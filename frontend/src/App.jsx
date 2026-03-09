@@ -14,8 +14,8 @@ import QuizResultPage from "./pages/Quizzes/QuizResultPage"
 import ProfilePage from "./pages/Profile/ProfilePage"
 
 function App() {
-  const loading = false;
-  const isAuthenticated = false;
+
+  const {loading, isAuthenticated} = useAuth();
 
   if (loading) {
     return (

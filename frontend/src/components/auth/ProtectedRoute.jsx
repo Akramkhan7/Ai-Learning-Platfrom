@@ -2,9 +2,8 @@ import React from 'react'
 import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = () => {
-    const loading = false;
-    const isAuthenticated = false;
-
+    const {loading, isAuthenticated} = useAuth();
+    
     if(loading){
         return(
             <div>
