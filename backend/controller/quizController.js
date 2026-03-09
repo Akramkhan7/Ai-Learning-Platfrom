@@ -1,5 +1,5 @@
-import Quiz from "../models/Quiz";
-import Document from "../models/Document";
+import Quiz from '../models/Quiz.js'
+import Document from "../models/Document.js";
 
 //get all quiz for a document
 //GET/api/quizzes/:documentId

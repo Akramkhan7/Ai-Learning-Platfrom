@@ -12,6 +12,7 @@ import FlashCard from "./pages/Flashcards/FlashCard"
 import QuizTakePage from "./pages/Quizzes/QuizTakePage"
 import QuizResultPage from "./pages/Quizzes/QuizResultPage"
 import ProfilePage from "./pages/Profile/ProfilePage"
+import { useAuth } from "./context/AuthContext";
 
 function App() {
 

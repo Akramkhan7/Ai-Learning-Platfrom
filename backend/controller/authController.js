@@ -63,7 +63,7 @@ export const login = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invaild credentials",
+        message: "Invalid credentials",
       });
     }
 
@@ -71,7 +71,7 @@ export const login = async (req, res, next) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invaild credentials",
+        message: "Invalid credentials",
       });
     }
 

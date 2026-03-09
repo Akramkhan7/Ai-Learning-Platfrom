@@ -13,7 +13,7 @@ import documentRoutes from './Routes/documentRoutes.js';
 import flashcardRoutes from './Routes/flashcardRoutes.js';
 import aiRoutes from './Routes/aiRoutes.js'
 import quizRoutes from './Routes/quizRoutes.js'
-import progressRoutes from './controller/progressController.js'
+import progressRoutes from './Routes/progressRoutes.js'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -58,7 +58,7 @@ app.use((req, res) =>{
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, ()=>{
-    console.log(`Server running in ${process.env.NODE_ENV} node on PORT : ${process.env.PORT}`);
+console.log(`Server running on PORT: ${PORT}`);
 });
 
 process.on('unhandledRejection', (err) =>{

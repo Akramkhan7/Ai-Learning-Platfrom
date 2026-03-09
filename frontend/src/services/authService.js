@@ -10,7 +10,10 @@ const login = async (email, password) => {
 
     return response.data;
   } catch (err) {
-    throw err.response?.data || { message: "An unknown error occurred" };
+    const message =
+      err.response?.data?.message || err.message || "Login failed";
+
+    throw new Error(message);
   }
 };
 
@@ -41,7 +44,7 @@ const updateProfile = async (userData) => {
   try {
     const response = await axiosInstance.post(
       API_PATHS.AUTH.UPDATE_PROFILE,
-      userData
+      userData,
     );
 
     return response.data;
@@ -54,7 +57,7 @@ const changePassword = async (password) => {
   try {
     const response = await axiosInstance.post(
       API_PATHS.AUTH.CHANGE_PASSWORD,
-      password
+      password,
     );
 
     return response.data;

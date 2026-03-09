@@ -1,6 +1,6 @@
-import FlashCard from '../models/FlashCard';
-import Quiz from '../models/Quiz';
-import Document from '../models/Document';
+import FlashCard from '../models/FlashCard.js';
+import Quiz from '../models/Quiz.js';
+import Document from '../models/Document.js';
 
 //get user learning statistics
 //GET/api/progress/dashboard
