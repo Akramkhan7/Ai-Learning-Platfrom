@@ -47,7 +47,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 font-display">
 
       {/* Background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px] opacity-30"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] opacity-30"></div>
 
       {/* Card */}
       <div className="relative w-full max-w-md px-6">

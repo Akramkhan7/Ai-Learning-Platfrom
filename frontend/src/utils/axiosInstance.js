@@ -11,20 +11,18 @@ const axiosInstance = axios.create({
 });
 
 // Request Interceptor
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem("token");
+axiosInstance.interceptors.request.use((config) => {
 
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-    }
+  const accessToken = localStorage.getItem("token");
 
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+  console.log("TOKEN SENT:", accessToken);
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
-);
+
+  return config;
+});
 
 // Response Interceptor
 axiosInstance.interceptors.response.use(

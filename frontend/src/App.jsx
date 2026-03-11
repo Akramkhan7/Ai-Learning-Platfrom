@@ -6,17 +6,17 @@ import LoginPage from "./pages/Auth/LoginPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 import DashboardListPage from "./pages/Dashboard/Dashboard";
-import DocumentDetailsPage from "./pages/Documents/DocumentDetailsPage"
-import FlashCardsListPage from "./pages/Flashcards/FlashCardsListPage"
-import FlashCard from "./pages/Flashcards/FlashCard"
-import QuizTakePage from "./pages/Quizzes/QuizTakePage"
-import QuizResultPage from "./pages/Quizzes/QuizResultPage"
-import ProfilePage from "./pages/Profile/ProfilePage"
+import DocumentDetailsPage from "./pages/Documents/DocumentDetailsPage";
+import FlashCardsListPage from "./pages/Flashcards/FlashCardsListPage";
+import FlashCard from "./pages/Flashcards/FlashCard";
+import QuizTakePage from "./pages/Quizzes/QuizTakePage";
+import QuizResultPage from "./pages/Quizzes/QuizResultPage";
+import ProfilePage from "./pages/Profile/ProfilePage";
 import { useAuth } from "./context/AuthContext";
+import AppLayout from "./pages/Layouts/AppLayout";
 
 function App() {
-
-  const {loading, isAuthenticated} = useAuth();
+  const { loading, isAuthenticated } = useAuth();
 
   if (loading) {
     return (
@@ -32,9 +32,19 @@ function App() {
         <Route
           path="/"
           element={
-            isAuthenticated
-              ? <Navigate to="/dashboard" replace />
-              : <Navigate to="/login" replace />
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
           }
         />
 
