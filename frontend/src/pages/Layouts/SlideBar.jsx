@@ -37,9 +37,10 @@ const SlideBar = ({ isSidebarOpen, toggleSidebar }) => {
       ></div>
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white/90 backdrop-blur-lg border-r border-slate-200/60 z-50 md:relative md:flex md:flex-col transition-transform duration-300 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed top-0 left-0 h-full w-64 bg-white/90 backdrop-blur-lg border-r border-slate-200/60 z-50 
+        transition-transform duration-300
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0 md:relative md:flex md:flex-col`}
       >
         {/* Logo */}
         <div className="flex items-center justify-between h-16 px-5 border-b border-slate-200/60">
@@ -67,6 +68,9 @@ const SlideBar = ({ isSidebarOpen, toggleSidebar }) => {
             <NavLink
               key={link.to}
               to={link.to}
+              onClick={() => {
+                if (window.innerWidth < 768) toggleSidebar();
+              }}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl font-semibold transition ${
                   isActive
@@ -96,4 +100,4 @@ const SlideBar = ({ isSidebarOpen, toggleSidebar }) => {
   );
 };
 
-export default SlideBar; 
+export default SlideBar;
