@@ -35,7 +35,7 @@ const Header = ({ toggleSidebar }) => {
             <div className="flex items-center gap-3 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition-colors duration-200 cursor-pointer">
 
               {/* Avatar */}
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shadow-md">
+              <div className="w-9 h-9 rounded-xl bg-linear-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shadow-md">
                 <User size={18} strokeWidth={2.5} />
               </div>
 

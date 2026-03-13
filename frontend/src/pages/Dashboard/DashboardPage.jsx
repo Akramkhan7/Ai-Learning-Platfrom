@@ -6,6 +6,7 @@ import { Clock, FileText, BrainCircuit, ClipboardList } from "lucide-react";
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+ 
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -28,7 +29,7 @@ const Dashboard = () => {
 
   if (!dashboard || !dashboard.overview) {
     return (
-      <div className="min-h-screen bg-gradient-to-r from-slate-50 via-white flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-r from-slate-50 via-white flex items-center justify-center">
         <p className="text-gray-600 text-sm">No Dashboard Data Available.</p>
       </div>
     );
