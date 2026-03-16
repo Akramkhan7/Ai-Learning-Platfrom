@@ -34,7 +34,7 @@ export const getDashboard = async (req, res, next) => {
     const quizzes = await Quiz.find({ userId, completedAt: { $ne: null } });
     const avgScore =
       quizzes.length > 0
-        ? Math.round(quizzes.reduce((sum, q) => sum + q.score) / quizzes.length)
+        ? Math.round(quizzes.reduce((sum, q) => sum + q.score,0) / quizzes.length)
         : 0;
 
     //recent activities
@@ -67,7 +67,7 @@ export const getDashboard = async (req, res, next) => {
           studyStreak,
         },
         recentActivity: {
-          document: recentDocument,
+          documents: recentDocument,
           quizzes: recentQuizzes,
         },
       },

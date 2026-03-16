@@ -6,7 +6,6 @@ import { Clock, FileText, BrainCircuit, ClipboardList } from "lucide-react";
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
- 
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -26,6 +25,7 @@ const Dashboard = () => {
   }, []);
 
   if (loading) return <Spinner />;
+  console.log("Dashboard:", dashboard);
 
   if (!dashboard || !dashboard.overview) {
     return (
@@ -67,12 +67,13 @@ const Dashboard = () => {
       link: `/documents/${doc._id}`,
       type: "document",
     })),
-    ...(dashboard?.recentActivity?.flashcards || []).map((fc) => ({
-      id: fc._id,
-      description: fc.title,
-      timestamp: fc.lastAccessed,
-      link: `/flashcards/${fc._id}`,
-      type: "flashcard",
+
+    ...(dashboard?.recentActivity?.quizzes || []).map((quiz) => ({
+      id: quiz._id,
+      description: quiz.title,
+      timestamp: quiz.completedAt,
+      link: `/quizzes/${quiz._id}`,
+      type: "quiz",
     })),
   ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
@@ -143,12 +144,16 @@ const Dashboard = () => {
                   <p className="text-sm text-slate-700">
                     {activity.type === "document"
                       ? "Document Accessed:"
-                      : "Flashcard Studied:"}{" "}
+                      : activity.type === "quiz"
+                        ? "Quiz Completed:"
+                        : "Activity"}
                     <span className="font-medium">{activity.description}</span>
                   </p>
 
                   <p className="text-xs text-slate-500 mt-1">
-                    {new Date(activity.timestamp).toLocaleString()}
+                    {activity.timestamp
+                      ? new Date(activity.timestamp).toLocaleString()
+                      : "Recently"}
                   </p>
                 </div>
 

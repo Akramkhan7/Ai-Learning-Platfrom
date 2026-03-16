@@ -6,7 +6,7 @@ import LoginPage from "./pages/Auth/LoginPage";
 import Dashboard from "./pages/Dashboard/DashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
-import DashboardListPage from "./pages/Dashboard/DashboardPage";
+import DocumentListPage from "./pages/Documents/DocumentListPage";
 import DocumentDetailsPage from "./pages/Documents/DocumentDetailsPage";
 
 import FlashCardsListPage from "./pages/Flashcards/FlashCardsListPage";
@@ -54,7 +54,7 @@ function App() {
 
           <Route path="/dashboard" element={<Dashboard />} />
 
-          <Route path="/documents" element={<DocumentDetailsPage />} />
+          <Route path="/documents" element={<DocumentListPage />} />
           <Route path="/documents/:id" element={<DocumentDetailsPage />} />
 
           <Route path="/flashcards" element={<FlashCardsListPage />} />
