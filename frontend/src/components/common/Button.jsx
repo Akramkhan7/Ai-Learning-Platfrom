@@ -23,9 +23,21 @@ const Button = ({children,onClick,
     }
   return (
     <div>
-      
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        baseStyle,
+        variantStyles[variant],
+        sizeStyles[size],
+        className].join(' ')
+      }
+    >
+      {children}
+    </button>
     </div>
   )
 }
 
-export default Button
+export default Button;

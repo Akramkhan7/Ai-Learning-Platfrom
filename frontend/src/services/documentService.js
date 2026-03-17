@@ -3,10 +3,11 @@ import axiosInstance from "../utils/axiosInstance";
 
 const getDocuments = async (documentId, concept) => {
   try {
-    const response = await axiosInstance.post(
+    const response = await axiosInstance.get(
       API_PATHS.DOCUMENTS.GET_DOCUMENTS,
       { documentId, concept }
     );
+    console.log( "Res : " , response);
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to fetch documents" };
