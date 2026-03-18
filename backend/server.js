@@ -16,6 +16,7 @@ import quizRoutes from './Routes/quizRoutes.js'
 import progressRoutes from './Routes/progressRoutes.js'
 
 
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -40,8 +41,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/ai',aiRoutes);
-app.use('/api/quizzes',quizRoutes)
-app.use('/api/progress',progressRoutes)
+app.use('/api/quizzes',quizRoutes);
+app.use('/api/progress',progressRoutes);
 
 //Routes
 app.use(errorHandler);

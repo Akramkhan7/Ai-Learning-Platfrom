@@ -77,11 +77,13 @@ export const uploadDocument = async (req, res, next) => {
 
 export const getDocuments = async (req, res, next) => {
   try {
+    console.log("REQ.USER:", req.user);
     const documents = await Document.aggregate([
       {
         $match: {
-          userId: new mongoose.Types.ObjectId(req.user._id),
-        },
+  userId: new mongoose.Types.ObjectId(req.user._id),
+},
+        
       },
       {
         $lookup: {

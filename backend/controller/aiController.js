@@ -161,7 +161,9 @@ export const generateSummary = async (req, res, next) => {
 // POST /api/ai/chat
 export const chat = async (req, res, next) => {
   try {
+    console.log("CHAT HIT");
     const { documentId, question } = req.body;
+  
 
     if (!documentId || !question) {
       return res.status(400).json({
@@ -175,6 +177,8 @@ export const chat = async (req, res, next) => {
       userId: req.user._id,
       status: "ready",
     });
+
+  
 
     if (!document) {
       return res.status(404).json({
