@@ -26,7 +26,7 @@ const auth = async (req, res, next) => {
       });
     }
 
-    req.user = user; // controller can use req.user._id
+    req.user = user; 
 
     next();
   } catch (err) {
