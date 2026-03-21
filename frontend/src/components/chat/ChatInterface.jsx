@@ -27,6 +27,7 @@ const ChatInterface = () => {
         const response = await aiService.getChatHistory(documentId);
         setHistory(response.data);
       } catch (error) {
+        console.log(error);
         console.error("Failed to fetch Chat history", error);
       } finally {
         setInitialLoading(false);
@@ -56,7 +57,7 @@ const ChatInterface = () => {
 
     try {
       const response = await aiService.chat(documentId, useMessage.content);
-console.log(response);
+      console.log(response);
       const assistantMessage = {
         role: "assistant",
         content: response.data.answer,
@@ -74,58 +75,55 @@ console.log(response);
         timestamp: Date.now(),
       };
 
-      setHistory((prev) => [...prev, errorMessage]); // ✅ fixed
+      setHistory((prev) => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
   };
 
-const renderMessage = (msg, index) => {
-  const isUser = msg.role === "user";
+  const renderMessage = (msg, index) => {
+    const isUser = msg.role === "user";
 
-  return (
-    <div
-      key={index}
-      className={`flex items-start gap-3 my-4 ${
-        isUser ? "justify-end" : ""
-      }`}
-    >
-      {/* AI Avatar */}
-      {!isUser && (
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0">
-          <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
-        </div>
-      )}
-
-      {/* Message Bubble */}
+    return (
       <div
-        className={`max-w-lg p-4 rounded-2xl shadow-sm ${
-          isUser
-            ? "bg-linear-to-br from-emerald-500 to-teal-500 text-white rounded-br-md"
-            : "bg-white border border-slate-200/60 text-slate-800 rounded-bl-md"
-        }`}
+        key={index}
+        className={`flex items-start gap-3 my-4 ${isUser ? "justify-end" : ""}`}
       >
-        {isUser ? (
-          <p className="text-sm leading-relaxed">{msg.content}</p>
-        ) : (
-          <div className="prose prose-sm max-w-none prose-slate">
-            <MarkdownRenderer content={msg.content} />
+        {/* AI Avatar */}
+        {!isUser && (
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0">
+            <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+          </div>
+        )}
+
+        {/* Message Bubble */}
+        <div
+          className={`max-w-lg p-4 rounded-2xl shadow-sm ${
+            isUser
+              ? "bg-linear-to-br from-emerald-500 to-teal-500 text-white rounded-br-md"
+              : "bg-white border border-slate-200/60 text-slate-800 rounded-bl-md"
+          }`}
+        >
+          {isUser ? (
+            <p className="text-sm leading-relaxed">{msg.content}</p>
+          ) : (
+            <div className="prose prose-sm max-w-none prose-slate">
+              <MarkdownRenderer content={msg.content} />
+            </div>
+          )}
+        </div>
+
+        {/* User Avatar */}
+        {isUser && (
+          <div className="w-9 h-9 rounded-xl bg-linear-to-br from-slate-200 to-slate-300 flex items-center justify-center text-sm font-semibold text-slate-700 shrink-0 shadow-sm">
+            {user?.username?.charAt(0).toUpperCase() || "U"}
           </div>
         )}
       </div>
-
-      {/* User Avatar */}
-      {isUser && (
-        <div className="w-9 h-9 rounded-xl bg-linear-to-br from-slate-200 to-slate-300 flex items-center justify-center text-sm font-semibold text-slate-700 shrink-0 shadow-sm">
-          {user?.username?.charAt(0).toUpperCase() || "U"}
-        </div>
-      )}
-    </div>
-  );
-};
+    );
+  };
 
   if (initialLoading) {
-    
     return (
       <div className="flex flex-col h-[70vh] bg-white/80 backdrop-blur-xl border border-slate-200/60 items-center justify-center shadow-xl shadow-slate-200 rounded-2xl">
         <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
@@ -190,29 +188,28 @@ const renderMessage = (msg, index) => {
       {/* Input Area */}
       <div className="p-5 border-t border-slate-200/60 bg-white/80">
         <form onSubmit={handleSendMessage} className="flex items-center gap-3">
-<input
-  type="text"
-  value={message}
-  onChange={(e) => setMessage(e.target.value)}
-  placeholder="Ask a follow-up question..."
-  className="flex-1 h-12 px-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder:text-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:shadow-lg"
-  disabled={loading}
-/>
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Ask a follow-up question..."
+            className="flex-1 h-12 px-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder:text-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:shadow-lg"
+            disabled={loading}
+          />
 
-<button
-  type="submit"
-  disabled={loading || !message.trim()}
-  className="shrink-0 w-12 h-12 bg-gradient-to-r from-emerald-400 to-teal-500 
+          <button
+            type="submit"
+            disabled={loading || !message.trim()}
+            className="shrink-0 w-12 h-12 bg-gradient-to-r from-emerald-400 to-teal-500 
   border border-emerald-500 
   hover:from-emerald-500 hover:to-teal-500 
   text-white rounded-xl transition-all duration-200 
   shadow-lg shadow-emerald-500/25 
   disabled:opacity-50 disabled:cursor-not-allowed 
   active:scale-[0.95] flex items-center justify-center"
-
->
-  <Send className="w-5 h-5 text-white" strokeWidth={2} />
-</button>
+          >
+            <Send className="w-5 h-5 text-white" strokeWidth={2} />
+          </button>
         </form>
       </div>
     </div>

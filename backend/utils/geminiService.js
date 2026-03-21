@@ -181,31 +181,29 @@ ${text.substring(0, 20000)}`;
 ====================================================== */
 
 export const chatWithContext = async (question, chunks) => {
+  if (!chunks || chunks.length === 0) {
+    return "No relevant content found in the document.";
+  }
+
   const context = chunks
     .map((c, i) => `[Chunk ${i + 1}]\n${c.content}`)
     .join("\n\n");
 
-  const prompt = `Based on the following context from a document, analyse the context and answer the user's question.
-If the answer is not in the context, say so.
+  const prompt = `Answer ONLY from the context.
 
 Context:
 ${context}
 
 Question: ${question}
 
-Answer:`;
+If not found, say: "Answer not found in document."`;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-lite",
-      contents: prompt,
-    });
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash-lite",
+    contents: prompt,
+  });
 
-    return response.text;
-  } catch (error) {
-    console.error("Gemini API error:", error);
-    throw new Error("Failed to process chat request");
-  }
+  return getText(response);
 };
 
 /* ======================================================

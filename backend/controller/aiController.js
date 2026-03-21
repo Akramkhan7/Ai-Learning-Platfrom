@@ -3,11 +3,11 @@ import FlashCard from "../models/FlashCard.js";
 import Quiz from "../models/Quiz.js";
 import ChatHistory from "../models/ChatHistory.js";
 import * as geminiService from "../utils/geminiService.js";
-import { findRelevantChunks } from "../utils/textChunker.js";
+import { chunkText, findRelevantChunks } from "../utils/textChunker.js";
 
-
-// Generate Flashcards
-// POST /api/ai/generate-flashcards
+/* ======================================================
+   GENERATE FLASHCARDS
+====================================================== */
 export const generateFlashcards = async (req, res, next) => {
   try {
     const { documentId, count = 10 } = req.body;
@@ -25,15 +25,15 @@ export const generateFlashcards = async (req, res, next) => {
       status: "ready",
     });
 
-    if (!document) {
+    if (!document || !document.content) {
       return res.status(400).json({
         success: false,
-        message: "Document not found or not ready",
+        message: "Document not found or empty",
       });
     }
 
     const cards = await geminiService.generateFlashcards(
-      document.extractedText,
+      document.content, // ✅ FIXED
       parseInt(count)
     );
 
@@ -59,9 +59,9 @@ export const generateFlashcards = async (req, res, next) => {
   }
 };
 
-
-// Generate Quiz
-// POST /api/ai/generate-quiz
+/* ======================================================
+   GENERATE QUIZ
+====================================================== */
 export const generateQuiz = async (req, res, next) => {
   try {
     const { documentId, numQuestion = 5, title } = req.body;
@@ -79,15 +79,15 @@ export const generateQuiz = async (req, res, next) => {
       status: "ready",
     });
 
-    if (!document) {
+    if (!document || !document.content) {
       return res.status(400).json({
         success: false,
-        message: "Document not found or not ready",
+        message: "Document not found or empty",
       });
     }
 
     const questions = await geminiService.generateQuiz(
-      document.extractedText,
+      document.content, // ✅ FIXED
       parseInt(numQuestion)
     );
 
@@ -111,9 +111,9 @@ export const generateQuiz = async (req, res, next) => {
   }
 };
 
-
-// Generate Summary
-// POST /api/ai/generate-summary
+/* ======================================================
+   GENERATE SUMMARY
+====================================================== */
 export const generateSummary = async (req, res, next) => {
   try {
     const { documentId } = req.body;
@@ -131,15 +131,15 @@ export const generateSummary = async (req, res, next) => {
       status: "ready",
     });
 
-    if (!document) {
+    if (!document || !document.content) {
       return res.status(404).json({
         success: false,
-        message: "Document not found or not ready",
+        message: "Document not found or empty",
       });
     }
 
     const summary = await geminiService.generateSummary(
-      document.extractedText
+      document.content // ✅ FIXED
     );
 
     res.status(201).json({
@@ -156,14 +156,12 @@ export const generateSummary = async (req, res, next) => {
   }
 };
 
-
-// Chat with Document
-// POST /api/ai/chat
+/* ======================================================
+   CHAT WITH DOCUMENT
+====================================================== */
 export const chat = async (req, res, next) => {
   try {
-    console.log("CHAT HIT");
     const { documentId, question } = req.body;
-  
 
     if (!documentId || !question) {
       return res.status(400).json({
@@ -172,23 +170,24 @@ export const chat = async (req, res, next) => {
       });
     }
 
-    const document = await Document.findOne({
-      _id: documentId,
-      userId: req.user._id,
-      status: "ready",
-    });
+    const document = await Document.findById(documentId);
 
-  
-
-    if (!document) {
+    if (!document || !document.content) {
       return res.status(404).json({
         success: false,
-        message: "Document not found or not ready",
+        message: "Document not found or empty",
       });
     }
 
-    const relevantChunks = findRelevantChunks(document.chunks, question, 3);
-    const chunkIndices = relevantChunks.map((c) => c.chunkIndex);
+    const chunks = chunkText(document.content);
+    const relevantChunks = findRelevantChunks(chunks, question, 3);
+
+    const finalChunks =
+      relevantChunks.length > 0
+        ? relevantChunks
+        : chunks.slice(0, 3);
+
+    const chunkIndices = finalChunks.map((c) => c.chunkIndex);
 
     let chatHistory = await ChatHistory.findOne({
       userId: req.user._id,
@@ -205,7 +204,7 @@ export const chat = async (req, res, next) => {
 
     const answer = await geminiService.chatWithContext(
       question,
-      relevantChunks
+      finalChunks
     );
 
     chatHistory.message.push(
@@ -240,9 +239,9 @@ export const chat = async (req, res, next) => {
   }
 };
 
-
-// Explain Concept
-// POST /api/ai/explain-concept
+/* ======================================================
+   EXPLAIN CONCEPT
+====================================================== */
 export const explainConcept = async (req, res, next) => {
   try {
     const { documentId, concept } = req.body;
@@ -254,21 +253,31 @@ export const explainConcept = async (req, res, next) => {
       });
     }
 
-    const document = await Document.findOne({
-      _id: documentId,
-      userId: req.user._id,
-      status: "ready",
-    });
+    // const document = await Document.findOne({
+    //   _id: documentId,
+    //   userId: req.user._id,
+    //   status: "ready",
+    // });
 
-    if (!document) {
+    const document = await Document.findById(documentId);
+console.log("DOC FOUND:", document);
+
+    if (!document || !document.content) {
       return res.status(404).json({
         success: false,
-        message: "Document not found or not ready",
+        message: "Document not found or empty",
       });
     }
 
-    const relevantChunks = findRelevantChunks(document.chunks, concept, 3);
-    const context = relevantChunks.map((c) => c.content).join("\n\n");
+    const chunks = chunkText(document.content); // ✅ FIXED
+    const relevantChunks = findRelevantChunks(chunks, concept, 3);
+
+    const finalChunks =
+      relevantChunks.length > 0
+        ? relevantChunks
+        : chunks.slice(0, 3);
+
+    const context = finalChunks.map((c) => c.content).join("\n\n");
 
     const explanation = await geminiService.explainConcept(
       concept,
@@ -280,7 +289,7 @@ export const explainConcept = async (req, res, next) => {
       data: {
         concept,
         explanation,
-        relevantChunks: relevantChunks.map((c) => c.chunkIndex),
+        relevantChunks: finalChunks.map((c) => c.chunkIndex),
       },
       message: "Explanation generated successfully",
     });
@@ -289,9 +298,9 @@ export const explainConcept = async (req, res, next) => {
   }
 };
 
-
-// Get Chat History
-// POST /api/ai/chat-history
+/* ======================================================
+   GET CHAT HISTORY
+====================================================== */
 export const getChatHistory = async (req, res, next) => {
   try {
     const { documentId } = req.body;
