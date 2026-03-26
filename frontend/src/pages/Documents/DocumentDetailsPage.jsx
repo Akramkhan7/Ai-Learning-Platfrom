@@ -8,6 +8,7 @@ import documentService from "../../services/documentService";
 import PageHeader from "../../components/common/PageHeader";
 import Tabs from "../../components/common/Tabs";
 import ChatInterface from "../../components/chat/ChatInterface";
+import AiActions from "../../components/ai/AiActions";
 
 const DocumentDetailsPage = () => {
   const { id } = useParams();
@@ -92,7 +93,7 @@ const DocumentDetailsPage = () => {
   };
 
   const renderAiActions = () => {
-    return "renderAiActions";
+    return <AiActions />
   };
 
   const renderFlashCardsTabs = () => {
