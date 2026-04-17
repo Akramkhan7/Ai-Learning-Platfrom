@@ -9,8 +9,12 @@ import { chunkText, findRelevantChunks } from "../utils/textChunker.js";
    GENERATE FLASHCARDS
 ====================================================== */
 export const generateFlashcards = async (req, res, next) => {
+  
   try {
     const { documentId, count = 10 } = req.body;
+
+    console.log("documentId:", documentId);
+console.log("user:", req.user);
 
     if (!documentId) {
       return res.status(400).json({
@@ -33,7 +37,7 @@ export const generateFlashcards = async (req, res, next) => {
     }
 
     const cards = await geminiService.generateFlashcards(
-      document.content, // ✅ FIXED
+      document.content, 
       parseInt(count)
     );
 
@@ -269,7 +273,7 @@ console.log("DOC FOUND:", document);
       });
     }
 
-    const chunks = chunkText(document.content); // ✅ FIXED
+    const chunks = chunkText(document.content); 
     const relevantChunks = findRelevantChunks(chunks, concept, 3);
 
     const finalChunks =
