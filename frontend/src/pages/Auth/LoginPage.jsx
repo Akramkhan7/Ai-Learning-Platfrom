@@ -31,7 +31,6 @@ const LoginPage = () => {
       navigate("/dashboard");
 
     } catch (err) {
-
       console.error("Login error:", err);
 
       const message = err.message || "Login failed. Please try again.";

@@ -1,22 +1,26 @@
 import Document from "../models/Document.js";
 import FlashCard from "../models/FlashCard.js";
 import Quiz from "../models/Quiz.js";
-import { extractTextFromPDF } from "../utils/pdfParser.js";
+import { parsePDF } from "../utils/pdfParser.js";
 import mongoose from "mongoose";
 import fs from "fs/promises";
 import { chunkText } from "../utils/textChunker.js";
 
 const processPDF = async (documentId, filePath) => {
   try {
-    const { text } = await extractTextFromPDF(filePath);
+    const { text } = await parsePDF(filePath);
+
+    if (!text || text.trim().length === 0) {
+  throw new Error("Empty PDF content");
+}
 
     const chunks = chunkText(text, 500, 50);
 
     await Document.findByIdAndUpdate(documentId, {
-      extractedText: text,
-      chunks,
-      status: "ready",
-    });
+  content: text, // ✅ IMPORTANT
+  chunks,
+  status: "ready",
+});
 
     console.log(`Document ${documentId} processed successfully`);
   } catch (err) {

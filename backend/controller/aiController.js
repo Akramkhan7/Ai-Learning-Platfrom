@@ -8,13 +8,11 @@ import { chunkText, findRelevantChunks } from "../utils/textChunker.js";
 /* ======================================================
    GENERATE FLASHCARDS
 ====================================================== */
+
 export const generateFlashcards = async (req, res, next) => {
-  
+
   try {
     const { documentId, count = 10 } = req.body;
-
-    console.log("documentId:", documentId);
-console.log("user:", req.user);
 
     if (!documentId) {
       return res.status(400).json({
@@ -28,6 +26,7 @@ console.log("user:", req.user);
       userId: req.user._id,
       status: "ready",
     });
+    console.log("DOCUMENT FOUND:", document);
 
     if (!document || !document.content) {
       return res.status(400).json({
@@ -167,6 +166,10 @@ export const chat = async (req, res, next) => {
   try {
     const { documentId, question } = req.body;
 
+     console.log("=== CHAT DEBUG ===");
+    console.log("documentId received:", documentId);
+    console.log("question received:", question);
+
     if (!documentId || !question) {
       return res.status(400).json({
         success: false,
@@ -176,6 +179,12 @@ export const chat = async (req, res, next) => {
 
     const document = await Document.findById(documentId);
 
+     console.log("document found:", document?._id);
+    console.log("document status:", document?.status);
+    console.log("document content length:", document?.content?.length);
+    console.log("==================");
+
+    
     if (!document || !document.content) {
       return res.status(404).json({
         success: false,

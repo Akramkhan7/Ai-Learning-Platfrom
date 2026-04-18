@@ -43,7 +43,7 @@ const chat = async (documentId, message) => {
       documentId,
       question: message,
     });
-    return response.data;
+    return response.data.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to chat" };
   }
