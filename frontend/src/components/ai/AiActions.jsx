@@ -18,9 +18,13 @@ const [modalContent, setModalContent] = useState("");
   const handleGenerateSummary = async () => {
     setLoadingAction("summary");
     try {
-      const { summary } = await aiService.GenerateModalSummary(documentId);
+      const { summary, title } = await aiService.generateSummary(documentId);
+      
+      setModalContent(summary)
+      setModalTitle(title);
       toast.success("Summary Generated");
-      console.log(summary);
+      setIsModalOpen(true);
+
     } catch (error) {
       toast.error("Failed to generate summary");
     } finally {
@@ -45,7 +49,9 @@ const [modalContent, setModalContent] = useState("");
         concept,
       );
       toast.success("Explanation Ready");
-      console.log(explanation);
+      setIsModalOpen(true);
+      setModalContent(" ");
+      setModalContent(explanation)
       setConcept("");
     } catch (err) {
       toast.error("Failed to explain concept");

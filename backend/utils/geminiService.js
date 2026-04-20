@@ -4,7 +4,9 @@ import { GoogleGenAI } from "@google/genai";
 dotenv.config();
 
 if (!process.env.GEMINI_API_KEY) {
-  console.error("FATAL ERROR: GEMINI_API_KEY is not set in the environment variables.");
+  console.error(
+    "FATAL ERROR: GEMINI_API_KEY is not set in the environment variables.",
+  );
   process.exit(1);
 }
 
@@ -203,7 +205,11 @@ If not found, say: "Answer not found in document."`;
     contents: prompt,
   });
 
-  return getText(response);
+  // ✅ extract text properly
+  const text = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+  console.log(text);
+  return text;
 };
 
 /* ======================================================

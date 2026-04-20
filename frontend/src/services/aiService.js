@@ -31,7 +31,8 @@ const generateSummary = async (documentId) => {
     const response = await axiosInstance.post(API_PATHS.AI.GENERATE_SUMMARY, {
       documentId,
     });
-    return response.data;
+    
+    return response.data?.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to generate flashcards" };
   }
@@ -55,7 +56,8 @@ const explainConcept = async (documentId, concept) => {
       documentId,
       concept,
     });
-    return response.data;
+    console.log(response);
+    return response.data.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to explain concept" };
   }

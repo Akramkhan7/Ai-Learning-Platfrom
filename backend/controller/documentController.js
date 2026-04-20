@@ -1,26 +1,26 @@
 import Document from "../models/Document.js";
 import FlashCard from "../models/FlashCard.js";
 import Quiz from "../models/Quiz.js";
-import { parsePDF } from "../utils/pdfParser.js";
+import { parsePdf } from "../utils/pdfParser.js";
 import mongoose from "mongoose";
 import fs from "fs/promises";
 import { chunkText } from "../utils/textChunker.js";
 
 const processPDF = async (documentId, filePath) => {
   try {
-    const { text } = await parsePDF(filePath);
+    const { text } = await parsePdf(filePath);
 
     if (!text || text.trim().length === 0) {
-  throw new Error("Empty PDF content");
-}
+      throw new Error("Empty PDF content");
+    }
 
     const chunks = chunkText(text, 500, 50);
 
     await Document.findByIdAndUpdate(documentId, {
-  content: text, // ✅ IMPORTANT
-  chunks,
-  status: "ready",
-});
+      content: text, // ✅ IMPORTANT
+      chunks,
+      status: "ready",
+    });
 
     console.log(`Document ${documentId} processed successfully`);
   } catch (err) {
@@ -85,9 +85,8 @@ export const getDocuments = async (req, res, next) => {
     const documents = await Document.aggregate([
       {
         $match: {
-  userId: new mongoose.Types.ObjectId(req.user._id),
-},
-        
+          userId: new mongoose.Types.ObjectId(req.user._id),
+        },
       },
       {
         $lookup: {

@@ -56,14 +56,14 @@ const ChatInterface = () => {
     setLoading(true);
 
     try {
-      console.log("Sending documentId:", documentId); 
+      console.log("Sending documentId:", documentId);
       const response = await aiService.chat(documentId, useMessage.content);
       const assistantMessage = {
-  role: "assistant",
-  content: response.answer,           // response IS already the data object
-  timestamp: Date.now(),
-  relevantChunks: response.relevantChunks,
-};
+        role: "assistant",
+        content: response.answer, // response IS already the data object
+        timestamp: Date.now(),
+        relevantChunks: response.relevantChunks,
+      };
 
       setHistory((prev) => [...prev, assistantMessage]);
     } catch (error) {

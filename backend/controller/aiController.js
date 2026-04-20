@@ -4,13 +4,16 @@ import Quiz from "../models/Quiz.js";
 import ChatHistory from "../models/ChatHistory.js";
 import * as geminiService from "../utils/geminiService.js";
 import { chunkText, findRelevantChunks } from "../utils/textChunker.js";
+import { parsePdf } from "../utils/pdfParser.js";
+import fs from "fs"
+
+
 
 /* ======================================================
    GENERATE FLASHCARDS
 ====================================================== */
 
 export const generateFlashcards = async (req, res, next) => {
-
   try {
     const { documentId, count = 10 } = req.body;
 
@@ -36,8 +39,8 @@ export const generateFlashcards = async (req, res, next) => {
     }
 
     const cards = await geminiService.generateFlashcards(
-      document.content, 
-      parseInt(count)
+      document.content,
+      parseInt(count),
     );
 
     const flashcardSet = await FlashCard.create({
@@ -91,7 +94,7 @@ export const generateQuiz = async (req, res, next) => {
 
     const questions = await geminiService.generateQuiz(
       document.content, // ✅ FIXED
-      parseInt(numQuestion)
+      parseInt(numQuestion),
     );
 
     const quiz = await Quiz.create({
@@ -127,22 +130,23 @@ export const generateSummary = async (req, res, next) => {
         message: "Please provide documentId",
       });
     }
+    console.log(documentId)
+    const docs = await Document.find();
+    console.log(docs);
 
     const document = await Document.findOne({
       _id: documentId,
-      userId: req.user._id,
-      status: "ready",
     });
+ 
+    console.log(document);
+   
 
-    if (!document || !document.content) {
-      return res.status(404).json({
-        success: false,
-        message: "Document not found or empty",
-      });
-    }
+    const buffer = fs.readFileSync(document.localPath); // 👈 change path
+
+    const data = await parsePdf(buffer);
 
     const summary = await geminiService.generateSummary(
-      document.content // ✅ FIXED
+     JSON.stringify(data, null, 2) 
     );
 
     res.status(201).json({
@@ -166,39 +170,34 @@ export const chat = async (req, res, next) => {
   try {
     const { documentId, question } = req.body;
 
-     console.log("=== CHAT DEBUG ===");
-    console.log("documentId received:", documentId);
-    console.log("question received:", question);
-
     if (!documentId || !question) {
       return res.status(400).json({
         success: false,
         message: "Please provide documentId and question",
       });
     }
-
     const document = await Document.findById(documentId);
 
-     console.log("document found:", document?._id);
-    console.log("document status:", document?.status);
-    console.log("document content length:", document?.content?.length);
-    console.log("==================");
+     const buffer = fs.readFileSync(document.localPath); // 👈 change path
 
-    
-    if (!document || !document.content) {
+    const data = await parsePdf(buffer);
+
+  
+
+
+    if (!document) {
       return res.status(404).json({
         success: false,
         message: "Document not found or empty",
       });
     }
+ 
 
-    const chunks = chunkText(document.content);
+    const chunks = chunkText(JSON.stringify(data, null, 2));
     const relevantChunks = findRelevantChunks(chunks, question, 3);
 
     const finalChunks =
-      relevantChunks.length > 0
-        ? relevantChunks
-        : chunks.slice(0, 3);
+      relevantChunks.length > 0 ? relevantChunks : chunks.slice(0, 3);
 
     const chunkIndices = finalChunks.map((c) => c.chunkIndex);
 
@@ -215,10 +214,7 @@ export const chat = async (req, res, next) => {
       });
     }
 
-    const answer = await geminiService.chatWithContext(
-      question,
-      finalChunks
-    );
+    const answer = await geminiService.chatWithContext(question, finalChunks);
 
     chatHistory.message.push(
       {
@@ -232,7 +228,7 @@ export const chat = async (req, res, next) => {
         content: answer,
         timestamp: new Date(),
         relevantChunks: chunkIndices,
-      }
+      },
     );
 
     await chatHistory.save();
@@ -273,29 +269,24 @@ export const explainConcept = async (req, res, next) => {
     // });
 
     const document = await Document.findById(documentId);
-console.log("DOC FOUND:", document);
+    console.log("DOC FOUND:", document);
 
-    if (!document || !document.content) {
+    if (!document) {
       return res.status(404).json({
         success: false,
         message: "Document not found or empty",
       });
     }
 
-    const chunks = chunkText(document.content); 
+    const chunks = chunkText(document.content);
     const relevantChunks = findRelevantChunks(chunks, concept, 3);
 
     const finalChunks =
-      relevantChunks.length > 0
-        ? relevantChunks
-        : chunks.slice(0, 3);
+      relevantChunks.length > 0 ? relevantChunks : chunks.slice(0, 3);
 
     const context = finalChunks.map((c) => c.content).join("\n\n");
 
-    const explanation = await geminiService.explainConcept(
-      concept,
-      context
-    );
+    const explanation = await geminiService.explainConcept(concept, context);
 
     res.status(200).json({
       success: true,
