@@ -84,9 +84,24 @@ const FlashcardManager = ({ documentId }) => {
     }
   };
 
-  // FIX: corrected typo from "hangleToggleStar"
   const handleToggleStar = (cardId) => {
-    // TODO: implement star toggle
+    try{
+      await flashCardService.toggleStar(cardId);
+      const updateSets = flashcardSets.map((set)=>{
+        if(set._id === selectedSet._id){
+          const updatedCards = set.cards.map((card)=>
+            card._id === cardId ? {...card , isStarred :!card.isStarred } : card 
+          )
+          return {...set,  cards : updatedCards}
+        }
+        return set;
+      });
+      setFlashcardSets(updateSets);
+      setSelectedSet(updatedCards.find((set)=> set._id === selectedSet._id));
+      toast.success("Flashcard starred status successfully");
+    }catch(error){
+      toast.error("Failed to update star status")
+    }
   };
 
   const handleDeleteRequest = (e, set) => {
@@ -95,7 +110,6 @@ const FlashcardManager = ({ documentId }) => {
     setIsDeleteModalOpen(true);
   };
 
-  // FIX: was an empty no-op
   const handleConfirmDelete = async () => {
     if (!setToDelete) return;
     setDeleting(true);
@@ -257,8 +271,6 @@ const FlashcardManager = ({ documentId }) => {
           </button>
         </div>
 
-        {/* Set cards */}
-        {/* FIX: map callback was missing an explicit return (block body without return) */}
         <div className="flex flex-col gap-3">
           {flashcardSets.map((set) => (
             <div
