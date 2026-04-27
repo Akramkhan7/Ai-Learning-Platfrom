@@ -103,7 +103,7 @@ const DocumentDetailsPage = () => {
   };
 
   const renderQuizzesTabs = () => {
-    return "renderQuizzesTabs";
+    return <QuizManager documentId={id} />
   };
 
   const tabs = [

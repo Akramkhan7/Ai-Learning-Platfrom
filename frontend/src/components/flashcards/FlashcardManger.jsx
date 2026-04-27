@@ -84,7 +84,7 @@ const FlashcardManager = ({ documentId }) => {
     }
   };
 
-  const handleToggleStar = (cardId) => {
+  const handleToggleStar = async(cardId) => {
     try{
       await flashCardService.toggleStar(cardId);
       const updateSets = flashcardSets.map((set)=>{
