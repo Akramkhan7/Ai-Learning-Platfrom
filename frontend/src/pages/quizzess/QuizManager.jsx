@@ -65,7 +65,20 @@ const QuizManager = ({documentId}) => {
     }
 
 
-    const handleConfirmDelete = () =>{
+    const handleConfirmDelete = async() =>{
+        if(!selectedQuiz) return;
+        setDeleting(true);
+
+        try{
+            await quizeService.deleteQuiz(selectedQuiz._id);
+            toast.success(`'${selectedQuiz.title || 'Quiz '}' deleted.`);
+            setIsDeleteModalOpen(false);
+            setQuizzes(quizzes.filter((q)=> q._id !== selectedQuiz._id))
+        }catch(error){
+             toast.error("Failed to delete flashcard set.");
+        }finally{
+            setDeleting(false)
+        }
 
     }
 
@@ -103,6 +116,86 @@ const QuizManager = ({documentId}) => {
       </div>
 
     {renderQuizContent()}
+
+
+{/* Generate Quiz */}
+<Modal
+  isOpen={isGenerateModalOpen}
+  onClose={() => setIsGenerateModalOpen(false)}
+  title="Generate New Quiz"
+>
+  <form onSubmit={handleGenerateQuiz} className="space-y-4">
+    <div>
+      <label className="block text-xs font-medium text-neutral-700 mb-1.5">
+        Number of Questions
+      </label>
+
+      <input
+        type="number"
+        value={numQuestions}
+        onChange={(e) =>
+          setNumQuestions(Math.max(1, parseInt(e.target.value) || 1))
+        }
+        min="1"
+        required
+        className="w-full h-9 px-3 border border-neutral-200 rounded-lg bg-white text-sm text-neutral-900 placeholder-neutral-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#00d492] focus:border-transparent  "
+      />
+    </div>
+
+    <div className="flex justify-end gap-2 pt-2">
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={() => setIsGenerateModalOpen(false)}
+        disabled={generating}
+      >
+        Cancel
+      </Button>
+
+      <Button type="submit" disabled={generating}>
+        {generating ? "Generating..." : "Generate"}
+      </Button>
+    </div>
+  </form>
+</Modal>
+
+
+{/* Delete Confirmation */}
+<Modal
+  isOpen={isDeleteModalOpen}
+  onClose={() => setIsDeleteModalOpen(false)}
+  title="Confirm Delete Quiz"
+>
+  <div className="space-y-4">
+    <p className="text-sm text-neutral-600">
+      Are you sure you want to delete the quiz:{" "}
+      <span className="font-semibold">
+        {selectedQuiz?.title}
+      </span>
+      ?
+    </p>
+
+    <div className="flex justify-end gap-2 pt-2">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() => setIsDeleteModalOpen(false)}
+        disabled={deleting}
+      >
+        Cancel
+      </Button>
+
+      <Button
+        type="button"
+        onClick={handleConfirmDelete}
+        disabled={deleting}
+        className="bg-red-500 hover:bg-red-600 active:bg-red-700 text-white"
+      >
+        {deleting ? "Deleting..." : "Delete"}
+      </Button>
+    </div>
+  </div>
+</Modal>
 
     </div>
 

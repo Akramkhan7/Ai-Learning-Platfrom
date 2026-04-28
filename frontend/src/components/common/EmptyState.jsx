@@ -24,7 +24,7 @@ const EmptyState = ({ onActionClick, title, description, buttonText }) => {
       {buttonText && onActionClick && (
         <button
           onClick={onActionClick}
-          className="group relative inline-flex items-center gap-2 px-6 h-11 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          className="group relative inline-flex items-center gap-2 px-6 h-11 bg-linear-to-r from-indigo-500 to-purple-500 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
         >
           <span className="relative z-10 flex items-center gap-2">
             <Plus className="w-4 h-4" strokeWidth={2.5} />
