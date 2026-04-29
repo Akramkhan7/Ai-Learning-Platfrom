@@ -11,6 +11,7 @@ import ChatInterface from "../../components/chat/ChatInterface";
 import AiActions from "../../components/ai/AiActions";
 import FlashCard from "../../components/flashcards/Flashcard";
 import FlashcardManager from "../../components/flashcards/FlashcardManger";
+import QuizManager from "../../pages/quizzess/QuizManager"
 
 const DocumentDetailsPage = () => {
   const { id } = useParams();

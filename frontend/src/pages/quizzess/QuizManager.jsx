@@ -24,7 +24,7 @@ const QuizManager = ({documentId}) => {
     const [selectedQuiz, setSelectedQuiz] = useState(null);
 
 
-    const fetchQuizzes = () =>{
+    const fetchQuizzes = async() =>{
         setLoading(true);
         try{
             const data = await quizeService.getQuizzesForDocument(documentId)
@@ -120,11 +120,11 @@ const QuizManager = ({documentId}) => {
 
 {/* Generate Quiz */}
 <Modal
-  isOpen={isGenerateModalOpen}
+  isOpen={isGeneratingModalOpen}
   onClose={() => setIsGenerateModalOpen(false)}
   title="Generate New Quiz"
 >
-  <form onSubmit={handleGenerateQuiz} className="space-y-4">
+  <form onSubmit={handleGeneratedQuiz} className="space-y-4">
     <div>
       <label className="block text-xs font-medium text-neutral-700 mb-1.5">
         Number of Questions
@@ -132,7 +132,7 @@ const QuizManager = ({documentId}) => {
 
       <input
         type="number"
-        value={numQuestions}
+        value={numQuestion}
         onChange={(e) =>
           setNumQuestions(Math.max(1, parseInt(e.target.value) || 1))
         }
