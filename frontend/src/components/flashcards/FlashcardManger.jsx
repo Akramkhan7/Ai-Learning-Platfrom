@@ -48,6 +48,7 @@ const FlashcardManager = ({ documentId }) => {
     setGenerating(true);
     try {
       await aiService.generateFlashcards(documentId);
+      
       toast.success("Flashcard generated successfully.");
       fetchFlashcardsSets();
     } catch (error) {

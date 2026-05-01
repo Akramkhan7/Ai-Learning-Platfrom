@@ -24,14 +24,16 @@ export const generateFlashcards = async (req, res, next) => {
       });
     }
 
+    console.log(documentId)
+
     const document = await Document.findOne({
       _id: documentId,
       userId: req.user._id,
-      status: "ready",
+     
     });
     console.log("DOCUMENT FOUND:", document);
 
-    if (!document || !document.content) {
+    if (!document) {
       return res.status(400).json({
         success: false,
         message: "Document not found or empty",
@@ -39,7 +41,7 @@ export const generateFlashcards = async (req, res, next) => {
     }
 
     const cards = await geminiService.generateFlashcards(
-      document.content,
+      document,
       parseInt(count),
     );
 

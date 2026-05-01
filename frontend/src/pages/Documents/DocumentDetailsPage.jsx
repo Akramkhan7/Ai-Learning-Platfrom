@@ -24,7 +24,6 @@ const DocumentDetailsPage = () => {
       try {
         const data = await documentService.getDocumentById(id);
         setDocument(data);
-        console.log(data);
       } catch (error) {
         toast.error("Failed to fetch document details.");
         console.error(err);

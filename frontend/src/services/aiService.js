@@ -8,6 +8,7 @@ const generateFlashcards = async (documentId, options) => {
       API_PATHS.AI.GENERATE_FLASHCARDS,
       { documentId, ...options },
     );
+    console.log("RES_______",response);
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to generate flashcards" };
@@ -22,7 +23,7 @@ const generateQuiz = async (documentId, options) => {
     });
     return response.data;
   } catch (err) {
-    throw err.response?.data || { message: "Failed to generate flashcards" };
+    throw err.response?.data || { message: "Failed to generate quiz" };
   }
 };
 
@@ -34,7 +35,7 @@ const generateSummary = async (documentId) => {
     
     return response.data?.data;
   } catch (err) {
-    throw err.response?.data || { message: "Failed to generate flashcards" };
+    throw err.response?.data || { message: "Failed to generate summary" };
   }
 };
 
