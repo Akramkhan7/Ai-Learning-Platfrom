@@ -84,7 +84,8 @@ const FlashcardPage = () => {
   // 🔹 Review card
   const handleReview = async (index) => {
     const currentCard = flashcards[currentCardIndex];
-    if (!currentCard) return;
+    console.log("cardId:", currentCard?._id); // ← check this
+     if (!currentCard?._id) return; // ← guard _id too, not just currentCard
 
     try {
       await flashcardService.reviewFlashcard(currentCard._id, index);

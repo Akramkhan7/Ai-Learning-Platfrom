@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Star, RotateCcw } from "lucide-react"
 
-const FlashCard = ({ flashcard, onToggleStar }) => {
+const FlashCard = ({ flashcard, onToggleStar, currCardIndex }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
 
+if (!flashcard) return null;
   return (
+    
     <div className="relative w-full h-72" style={{ perspective: '1000px' }}>
       
       <div
@@ -41,7 +43,8 @@ const FlashCard = ({ flashcard, onToggleStar }) => {
               }`}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleStar(flashcard._id)
+               onToggleStar(currCardIndex);
+
               }}
             >
               <Star
@@ -77,7 +80,7 @@ const FlashCard = ({ flashcard, onToggleStar }) => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleStar(flashcard._id);
+                 onToggleStar(currCardIndex);
               }}
               className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
                 flashcard.isStarred

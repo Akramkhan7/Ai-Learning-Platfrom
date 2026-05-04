@@ -18,7 +18,7 @@ const FlashCardsListPage = () => {
         const res = await flashCardService.getAllFlashcardSets();
 
         console.log("fetchFlashcard---",res.data[0]);
-        setFlashcardSets(res.data)
+        setFlashcardSets(res)
       }catch(error){
         toast.error("Failed to fetch flashcard s")
       }finally{

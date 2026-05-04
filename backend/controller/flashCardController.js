@@ -4,7 +4,6 @@ import FlashCard from "../models/FlashCard.js";
 //GET/api/:documentId
 export const getFlashcards = async (req, res, next) => {
   try {
-    console.log("done")
     const flashcards = await FlashCard.find({
       userId: req.user._id,
       documentId: req.params.documentId,
@@ -26,7 +25,7 @@ export const getFlashcards = async (req, res, next) => {
 //GET/api/flashcards
 export const getAllFlashcardSets = async (req, res, next) => {
   try {
-    console.log("entered")
+    console.log("entered");
     const flashcardSets = await FlashCard.find({
       userId: req.user._id,
     })
@@ -49,7 +48,7 @@ export const getAllFlashcardSets = async (req, res, next) => {
 export const reviewFlashcard = async (req, res, next) => {
   try {
     const flashcardSet = await FlashCard.findOne({
-      "cards._id": req.params.cartId,
+      "cards._id": req.params.cardId,
       userId: req.user._id,
     });
 
@@ -61,9 +60,10 @@ export const reviewFlashcard = async (req, res, next) => {
     }
 
     const cardIndex = flashcardSet.cards.findIndex(
-      (card) => card._id.toString() === req.params.cartId,
+      (card) => card._id.toString() === req.params.cardId,
     );
-    if (cartIndex === -1) {
+
+    if (cardIndex === -1) {
       return res.status(400).json({
         success: true,
         message: "Card not found in set",
@@ -71,9 +71,9 @@ export const reviewFlashcard = async (req, res, next) => {
     }
 
     //update review info
-    flashcardSet.cards[cartIndex].lastReviwed = new Date();
-    flashcardSet.cards[cartIndex].reviewCount += 1;
 
+    flashcardSet.cards[cardIndex].lastReviwed = new Date();
+    flashcardSet.cards[cardIndex].reviewCount += 1;
     await flashcardSet.save();
 
     res.status(200).json({
@@ -89,37 +89,31 @@ export const reviewFlashcard = async (req, res, next) => {
 //PUT/api/flashcards/:cardId/star
 export const toggleStarFlashcard = async (req, res, next) => {
   try {
+    console.log("params:", req.params);
+    console.log("query:", req.query);
+
+    const cardIndex = parseInt(req.query.cardIndex);
+    const { cardId } = req.params;
+
     const flashcardSet = await FlashCard.findOne({
-      "card.id": req.params.cardId,
+      _id: cardId,
       userId: req.user._id,
     });
 
+    console.log("flashcardSet:", flashcardSet); // ← does this print?
+
     if (!flashcardSet) {
-      return res.status(400).json({
-        success: false,
-        message: "flashcard set or card not found",
-      });
+      return res.status(400).json({ success: false, message: "Flashcard set not found" });
     }
 
-    const cardIndex = flashcardSet.cards.findIndex(
-      (card) => card._id.toString() === req.params.cardId,
-    );
-    if (cardIndex === -1) {
-      return res.status(400).json({
-        success: false,
-        message: "Card not found in set",
-      });
+    if (isNaN(cardIndex) || cardIndex < 0 || cardIndex >= flashcardSet.cards.length) {
+      return res.status(400).json({ success: false, message: "Invalid card index" });
     }
 
-    //toggle star
-    flashcardSet.cards[cardIndex].isStarred =
-      !flashcardSet.cards[cardIndex].isStarred;
+    flashcardSet.cards[cardIndex].isStarred = !flashcardSet.cards[cardIndex].isStarred;
     await flashcardSet.save();
 
-    res.status(200).json({
-      success: false,
-      message: `Flashcard ${flashcardSet.cards[cardIndex].isStarred ? "starred" : "unstarred"}`,
-    });
+    return res.status(200).json({ success: true, message: "Star toggled successfully" });
   } catch (err) {
     next(err);
   }
@@ -143,7 +137,7 @@ export const deleteFlashcardSet = async (req, res, next) => {
     await flashcardSet.deleteOne();
 
     res.status(200).json({
-      success: false,
+      success: true,
       message: "Flashcard set deleted successfully",
     });
   } catch (err) {

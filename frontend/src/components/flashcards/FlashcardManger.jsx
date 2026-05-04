@@ -29,9 +29,9 @@ const FlashcardManager = ({ documentId }) => {
   const fetchFlashcardsSets = async () => {
     setLoading(true);
     try {
-      console.log(documentId)
+      console.log(documentId);
       const response = await flashcardService.getFlashcardsDocument(documentId);
-      console.log("from 2",response)
+      console.log("from 2", response);
       setFlashcardSets(response.data);
     } catch (error) {
       toast.error("Failed to fetch flashcard sets3.");
@@ -70,7 +70,8 @@ const FlashcardManager = ({ documentId }) => {
     if (selectedSet) {
       handleReview(currCardIndex);
       setCurrCardIndex(
-        (prev) => (prev - 1 + selectedSet.cards.length) % selectedSet.cards.length
+        (prev) =>
+          (prev - 1 + selectedSet.cards.length) % selectedSet.cards.length,
       );
     }
   };
@@ -82,27 +83,29 @@ const FlashcardManager = ({ documentId }) => {
       await flashcardService.reviewFlashcard(currentCard._id, index);
       toast.success("Flashcard reviewed successfully");
     } catch (error) {
-      toast.error("Failed to review flashcard.");
+      toast.error("Failed to review flashcard1.");
     }
   };
 
-  const handleToggleStar = async(cardId) => {
-    try{
-      await flashCardService.toggleStar(cardId);
-      const updateSets = flashcardSets.map((set)=>{
-        if(set._id === selectedSet._id){
-          const updatedCards = set.cards.map((card)=>
-            card._id === cardId ? {...card , isStarred :!card.isStarred } : card 
-          )
-          return {...set,  cards : updatedCards}
+  const handleToggleStar = async (cardId) => {
+    try {
+      await flashcardService.toggleStar(cardId);
+      const updateSets = flashcardSets.map((set) => {
+        if (set._id === selectedSet._id) {
+          const updatedCards = set.cards.map((card) =>
+            card._id === cardId
+              ? { ...card, isStarred: !card.isStarred }
+              : card,
+          );
+          return { ...set, cards: updatedCards };
         }
         return set;
       });
       setFlashcardSets(updateSets);
-      setSelectedSet(updatedCards.find((set)=> set._id === selectedSet._id));
+      setSelectedSet(updateSets.find((set) => set._id === selectedSet._id));
       toast.success("Flashcard starred status successfully");
-    }catch(error){
-      toast.error("Failed to update star status")
+    } catch (error) {
+      toast.error("Failed to update star status");
     }
   };
 
@@ -166,7 +169,13 @@ const FlashcardManager = ({ documentId }) => {
 
         {/* Card */}
         <div className="min-h-[260px] flex items-center justify-center">
-          <FlashCard card={currentCard} />
+          <FlashCard
+            flashcard={currentCard}
+            onToggleStar={(cardIndex) =>
+              handleToggleStar(selectedSet._id, cardIndex)
+            }
+            currCardIndex={currCardIndex}
+          />{" "}
         </div>
 
         {/* Navigation */}
@@ -308,8 +317,7 @@ const FlashcardManager = ({ documentId }) => {
               {/* Card count badge */}
               <div className="ml-auto pr-8 flex-shrink-0">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold">
-                  {set.cards.length}{" "}
-                  {set.cards.length === 1 ? "card" : "cards"}
+                  {set.cards.length} {set.cards.length === 1 ? "card" : "cards"}
                 </span>
               </div>
             </div>

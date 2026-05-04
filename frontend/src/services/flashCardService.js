@@ -14,11 +14,9 @@ const getAllFlashcardSets = async () => {
 
 const getFlashcardsDocument = async (documentId) => {
   try {
-    const response = await axiosInstance.post(
-      API_PATHS.FLASHCARDS.GET_FLASHCARDS_FOR_DOC,
-      { documentId }
+    const response = await axiosInstance.get(
+      API_PATHS.FLASHCARDS.GET_FLASHCARDS_FOR_DOC(documentId)
     );
-    console.log("ll",response)
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to fetch flashcards" };
@@ -27,21 +25,24 @@ const getFlashcardsDocument = async (documentId) => {
 
 const reviewFlashcard = async (cardId, cardIndex) => {
   try {
-    const response = await axiosInstance.post(
-      API_PATHS.FLASHCARDS.REVIEW_FLASHCARD(cardId),
-      { cardIndex }
-    );
+   const response = await axiosInstance.get(
+  API_PATHS.FLASHCARDS.REVIEW_FLASHCARD(cardId),
+  { params: { cardIndex } }
+);
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to review flashcard" };
   }
 };
 
-const toggleStar = async (cardId) => {
+const toggleStar = async (cardId,cardIndex) => {
+
   try {
-    const response = await axiosInstance.post(
-      API_PATHS.FLASHCARDS.TOGGLE_STAR(cardId)
-    );
+      console.log("setId:", setId, "cardIndex:", cardIndex); // ← check
+
+    const response = await axiosInstance.get(
+    `${API_PATHS.FLASHCARDS.TOGGLE_STAR(setId)}?cardIndex=${cardIndex}`
+  );
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to toggle star" };

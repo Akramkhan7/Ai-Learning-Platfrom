@@ -43,7 +43,6 @@ export const generateFlashcards = async (req, res, next) => {
       timeout: 30000,
     });
 
-    console.log("Bytes received:", response.data.byteLength);
 
     const buffer = Buffer.from(response.data);
     const data = await parsePdf(buffer);
