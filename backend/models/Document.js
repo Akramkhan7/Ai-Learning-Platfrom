@@ -2,7 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 const DocumentSchema = new Schema(
   {
-    userId: {                          // ← was "documentId"
+    userId: {
+      // ← was "documentId"
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -16,8 +17,8 @@ const DocumentSchema = new Schema(
     filePath: { type: String, required: true },
     localPath: { type: String, default: "" }, // ← was missing
     fileSize: { type: Number, required: true },
-    extractedText: { type: String, default: "" },  // ← was required:true
-    description: { type: String, default: "" },    // ← was required:true
+    extractedText: { type: String, default: "" }, // ← was required:true
+    description: { type: String, default: "" }, // ← was required:true
     chunks: [
       {
         content: { type: String, required: true },
@@ -25,6 +26,7 @@ const DocumentSchema = new Schema(
         chunkIndex: { type: Number, required: true },
       },
     ],
+    content: String,
     uploadDate: { type: Date, default: Date.now },
     lastAccessed: { type: Date, default: Date.now },
     status: {
@@ -33,7 +35,7 @@ const DocumentSchema = new Schema(
       default: "processing",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 DocumentSchema.index({ userId: 1, uploadDate: -1 });

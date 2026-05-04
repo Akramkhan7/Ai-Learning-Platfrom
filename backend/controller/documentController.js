@@ -1,14 +1,37 @@
 import Document from "../models/Document.js";
 import FlashCard from "../models/FlashCard.js";
 import Quiz from "../models/Quiz.js";
-import { parsePdf } from "../utils/pdfParser.js";
 import mongoose from "mongoose";
 import fs from "fs/promises";
 import { chunkText } from "../utils/textChunker.js";
+import { uploadPDF } from "../config/superbase.js";
+import { parsePdf } from "../utils/pdfParser.js"
+import path from "path";
 
-const processPDF = async (documentId, filePath) => {
+
+import axios from "axios";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const pdfParse = require("pdf-parse"); // ✅ correct way for ESM + pdf-parse
+
+const processPDF = async (documentId, fileUrl) => {
   try {
-    const { text } = await parsePdf(filePath);
+    console.log("Downloading:", fileUrl);
+
+    const response = await axios.get(fileUrl, {
+      responseType: "arraybuffer",
+      timeout: 30000,
+    });
+
+   
+
+    const buffer = Buffer.from(response.data);
+
+    const data = await parsePdf(buffer); // ✅ pass buffer directly
+    const text = JSON.stringify(data, null, 2);
+
+
 
     if (!text || text.trim().length === 0) {
       throw new Error("Empty PDF content");
@@ -17,21 +40,18 @@ const processPDF = async (documentId, filePath) => {
     const chunks = chunkText(text, 500, 50);
 
     await Document.findByIdAndUpdate(documentId, {
-      content: text, // ✅ IMPORTANT
+      content: text,
       chunks,
       status: "ready",
     });
 
-    console.log(`Document ${documentId} processed successfully`);
-  } catch (err) {
-    console.error(`Processing error for ${documentId}`, err);
+    console.log(`✅ Document ${documentId} processed successfully`);
 
-    await Document.findByIdAndUpdate(documentId, {
-      status: "failed",
-    });
+  } catch (err) {
+    console.error(`Processing error for ${documentId}:`, err.message);
+    await Document.findByIdAndUpdate(documentId, { status: "failed" });
   }
 };
-
 export const uploadDocument = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -40,6 +60,7 @@ export const uploadDocument = async (req, res, next) => {
         message: "Please upload a PDF file",
       });
     }
+    console.log(req.file);
 
     const { title } = req.body;
 
@@ -51,21 +72,29 @@ export const uploadDocument = async (req, res, next) => {
       });
     }
 
-    const baseUrl = `http://localhost:${process.env.PORT || 8000}`;
-    const fileUrl = `${baseUrl}/uploads/documents/${req.file.filename}`;
+    const result = await uploadPDF(req.file.path);
+
+    if (!result) {
+      return res.status(500).json({
+        success: false,
+        message: "Unable to upload on cloudinary",
+      });
+    }
+    console.log(result);
 
     const document = await Document.create({
       userId: req.user._id,
       title,
       fileName: req.file.originalname,
-      filePath: fileUrl, // public URL
+      filePath: result, // public URL
       localPath: req.file.path, // local file path for deletion
       fileSize: req.file.size,
       status: "processing",
     });
+    console.log(document);
 
     // Run processing in background (non-blocking)
-    processPDF(document._id, req.file.path).catch(console.error);
+    processPDF(document._id, document.filePath).catch(console.error);
 
     return res.status(201).json({
       success: true,

@@ -10,7 +10,7 @@ import DocumentListPage from "./pages/Documents/DocumentListPage";
 import DocumentDetailsPage from "./pages/Documents/DocumentDetailsPage";
 
 import FlashCardsListPage from "./pages/Flashcards/FlashCardsListPage";
-import FlashCard from "./pages/Flashcards/FlashCard";
+import FlashCard from "./pages/Flashcards/FlashCardPage";
 
 import QuizTakePage from "./pages/Quizzes/QuizTakePage";
 import QuizResultPage from "./pages/Quizzes/QuizResultPage";

@@ -4,6 +4,7 @@ import FlashCard from "../models/FlashCard.js";
 //GET/api/:documentId
 export const getFlashcards = async (req, res, next) => {
   try {
+    console.log("done")
     const flashcards = await FlashCard.find({
       userId: req.user._id,
       documentId: req.params.documentId,
@@ -25,6 +26,7 @@ export const getFlashcards = async (req, res, next) => {
 //GET/api/flashcards
 export const getAllFlashcardSets = async (req, res, next) => {
   try {
+    console.log("entered")
     const flashcardSets = await FlashCard.find({
       userId: req.user._id,
     })

@@ -18,6 +18,7 @@ const getFlashcardsDocument = async (documentId) => {
       API_PATHS.FLASHCARDS.GET_FLASHCARDS_FOR_DOC,
       { documentId }
     );
+    console.log("ll",response)
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to fetch flashcards" };

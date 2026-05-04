@@ -29,10 +29,12 @@ const FlashcardManager = ({ documentId }) => {
   const fetchFlashcardsSets = async () => {
     setLoading(true);
     try {
+      console.log(documentId)
       const response = await flashcardService.getFlashcardsDocument(documentId);
+      console.log("from 2",response)
       setFlashcardSets(response.data);
     } catch (error) {
-      toast.error("Failed to fetch flashcard sets.");
+      toast.error("Failed to fetch flashcard sets3.");
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,6 @@ const FlashcardManager = ({ documentId }) => {
     setGenerating(true);
     try {
       await aiService.generateFlashcards(documentId);
-      
       toast.success("Flashcard generated successfully.");
       fetchFlashcardsSets();
     } catch (error) {

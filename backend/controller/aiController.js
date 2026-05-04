@@ -5,9 +5,8 @@ import ChatHistory from "../models/ChatHistory.js";
 import * as geminiService from "../utils/geminiService.js";
 import { chunkText, findRelevantChunks } from "../utils/textChunker.js";
 import { parsePdf } from "../utils/pdfParser.js";
-import fs from "fs"
-
-
+import fs from "fs";
+import axios from "axios";
 
 /* ======================================================
    GENERATE FLASHCARDS
@@ -24,14 +23,13 @@ export const generateFlashcards = async (req, res, next) => {
       });
     }
 
-    console.log(documentId)
+    console.log(documentId);
 
     const document = await Document.findOne({
       _id: documentId,
       userId: req.user._id,
-     
     });
-    console.log("DOCUMENT FOUND:", document);
+
 
     if (!document) {
       return res.status(400).json({
@@ -40,8 +38,18 @@ export const generateFlashcards = async (req, res, next) => {
       });
     }
 
+    const response = await axios.get(document.filePath, {
+      responseType: "arraybuffer",
+      timeout: 30000,
+    });
+
+    console.log("Bytes received:", response.data.byteLength);
+
+    const buffer = Buffer.from(response.data);
+    const data = await parsePdf(buffer);
+
     const cards = await geminiService.generateFlashcards(
-      document,
+      JSON.stringify(data, null, 2),
       parseInt(count),
     );
 
@@ -84,18 +92,28 @@ export const generateQuiz = async (req, res, next) => {
     const document = await Document.findOne({
       _id: documentId,
       userId: req.user._id,
-      status: "ready",
     });
 
-    if (!document || !document.content) {
+    if (!document) {
       return res.status(400).json({
         success: false,
         message: "Document not found or empty",
       });
     }
 
+    const response = await axios.get(document.filePath, {
+      responseType: "arraybuffer",
+      timeout: 30000,
+    });
+
+    console.log("Bytes received:", response.data.byteLength);
+
+    const buffer = Buffer.from(response.data);
+
+    const data = await parsePdf(buffer);
+
     const questions = await geminiService.generateQuiz(
-      document.content, // ✅ FIXED
+      JSON.stringify(data, null, 2), // ✅ FIXED
       parseInt(numQuestion),
     );
 
@@ -132,23 +150,9 @@ export const generateSummary = async (req, res, next) => {
         message: "Please provide documentId",
       });
     }
-    console.log(documentId)
-    const docs = await Document.find();
-    console.log(docs);
-
-    const document = await Document.findOne({
-      _id: documentId,
-    });
- 
-    console.log(document);
-   
-
-    const buffer = fs.readFileSync(document.localPath); // 👈 change path
-
-    const data = await parsePdf(buffer);
 
     const summary = await geminiService.generateSummary(
-     JSON.stringify(data, null, 2) 
+      JSON.stringify(data, null, 2),
     );
 
     res.status(201).json({
@@ -179,13 +183,16 @@ export const chat = async (req, res, next) => {
       });
     }
     const document = await Document.findById(documentId);
+    const response = await axios.get(document.filePath, {
+      responseType: "arraybuffer",
+      timeout: 30000,
+    });
 
-     const buffer = fs.readFileSync(document.localPath); // 👈 change path
+    console.log("Bytes received:", response.data.byteLength);
+
+    const buffer = Buffer.from(response.data);
 
     const data = await parsePdf(buffer);
-
-  
-
 
     if (!document) {
       return res.status(404).json({
@@ -193,7 +200,6 @@ export const chat = async (req, res, next) => {
         message: "Document not found or empty",
       });
     }
- 
 
     const chunks = chunkText(JSON.stringify(data, null, 2));
     const relevantChunks = findRelevantChunks(chunks, question, 3);
