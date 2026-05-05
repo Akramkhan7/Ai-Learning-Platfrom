@@ -3,7 +3,7 @@ import axiosInstance from "../utils/axiosInstance";
 
 const getQuizzesForDocument = async (documentId) => {
   try {
-    const res = await axiosInstance.post(
+    const res = await axiosInstance.get(
       API_PATHS.QUIZZES.GET_QUIZZES_FOR_DOC(documentId)
     );
     return res.data;
@@ -14,9 +14,10 @@ const getQuizzesForDocument = async (documentId) => {
 
 const getQuizById = async (quizId) => {
   try {
-    const res = await axiosInstance.post(
+    const res = await axiosInstance.get(
       API_PATHS.QUIZZES.GET_QUIZ_BY_ID(quizId)
     );
+    console.log("RES_______",res);
     return res.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to fetch quiz" };
@@ -37,7 +38,7 @@ const submitQuiz = async (quizId, answer) => {
 
 const getQuizResult = async (quizId) => {
   try {
-    const res = await axiosInstance.post(
+    const res = await axiosInstance.get(
       API_PATHS.QUIZZES.GET_QUIZ_RESULTS(quizId)
     );
     return res.data;

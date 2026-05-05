@@ -89,9 +89,6 @@ export const reviewFlashcard = async (req, res, next) => {
 //PUT/api/flashcards/:cardId/star
 export const toggleStarFlashcard = async (req, res, next) => {
   try {
-    console.log("params:", req.params);
-    console.log("query:", req.query);
-
     const cardIndex = parseInt(req.query.cardIndex);
     const { cardId } = req.params;
 
@@ -100,7 +97,6 @@ export const toggleStarFlashcard = async (req, res, next) => {
       userId: req.user._id,
     });
 
-    console.log("flashcardSet:", flashcardSet); // ← does this print?
 
     if (!flashcardSet) {
       return res.status(400).json({ success: false, message: "Flashcard set not found" });

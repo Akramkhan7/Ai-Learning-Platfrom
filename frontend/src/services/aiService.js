@@ -8,7 +8,6 @@ const generateFlashcards = async (documentId, options) => {
       API_PATHS.AI.GENERATE_FLASHCARDS,
       { documentId, ...options },
     );
-    console.log("RES_______",response);
     return response.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to generate flashcards" };

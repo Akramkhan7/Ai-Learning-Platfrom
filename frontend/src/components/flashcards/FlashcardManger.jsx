@@ -31,7 +31,6 @@ const FlashcardManager = ({ documentId }) => {
     try {
       console.log(documentId);
       const response = await flashcardService.getFlashcardsDocument(documentId);
-      console.log("from 2", response);
       setFlashcardSets(response.data);
     } catch (error) {
       toast.error("Failed to fetch flashcard sets3.");
@@ -87,9 +86,11 @@ const FlashcardManager = ({ documentId }) => {
     }
   };
 
-  const handleToggleStar = async (cardId) => {
+  const handleToggleStar = async (cardId, cardIndex) => {
+      console.log("handleToggleStar called:", cardId, cardIndex); // ← check
     try {
-      await flashcardService.toggleStar(cardId);
+     await flashcardService.toggleStar(cardId, cardIndex);
+
       const updateSets = flashcardSets.map((set) => {
         if (set._id === selectedSet._id) {
           const updatedCards = set.cards.map((card) =>

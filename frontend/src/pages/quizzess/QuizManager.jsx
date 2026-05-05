@@ -3,7 +3,7 @@ import React from "react"
 import { Plus, Trash } from "lucide-react"
 import toast from "react-hot-toast";
 
-import quizeService from "../../services/quizService";
+import quizService from "../../services/quizService";
 import aiService from "../../services/aiService";
 import Spinner from "../../components/common/Spinner";
 import Button from "../../components/common/Button"
@@ -27,13 +27,13 @@ const QuizManager = ({documentId}) => {
     const fetchQuizzes = async() =>{
         setLoading(true);
         try{
-            const data = await quizeService.getQuizzesForDocument(documentId)
-            setQuizzes(data.data)
+            const data = await quizService.getQuizzesForDocument(documentId)
+            setQuizzes(data)
         }catch(error){
-            toast.error('Failed to fetch quizzes');
+            toast.error('Failed to fetch quizzes1');
             console.log(error);
         }finally{
-            setLoading(true);
+            setLoading(false);
         }
     }
 
@@ -70,7 +70,7 @@ const QuizManager = ({documentId}) => {
         setDeleting(true);
 
         try{
-            await quizeService.deleteQuiz(selectedQuiz._id);
+            await quizService.deleteQuiz(selectedQuiz._id);
             toast.success(`'${selectedQuiz.title || 'Quiz '}' deleted.`);
             setIsDeleteModalOpen(false);
             setQuizzes(quizzes.filter((q)=> q._id !== selectedQuiz._id))
@@ -121,7 +121,7 @@ const QuizManager = ({documentId}) => {
 {/* Generate Quiz */}
 <Modal
   isOpen={isGeneratingModalOpen}
-  onClose={() => setIsGenerateModalOpen(false)}
+  onClose={() => setIsGeneratingModalOpen(false)}
   title="Generate New Quiz"
 >
   <form onSubmit={handleGeneratedQuiz} className="space-y-4">
@@ -146,7 +146,7 @@ const QuizManager = ({documentId}) => {
       <Button
         type="button"
         variant="secondary"
-        onClick={() => setIsGenerateModalOpen(false)}
+       onClick={() => setIsGeneratingModalOpen(false)}
         disabled={generating}
       >
         Cancel

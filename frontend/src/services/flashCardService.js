@@ -38,7 +38,7 @@ const reviewFlashcard = async (cardId, cardIndex) => {
 const toggleStar = async (cardId,cardIndex) => {
 
   try {
-      console.log("setId:", setId, "cardIndex:", cardIndex); // ← check
+        console.log("service toggleStar:", setId, cardIndex); // ← check
 
     const response = await axiosInstance.get(
     `${API_PATHS.FLASHCARDS.TOGGLE_STAR(setId)}?cardIndex=${cardIndex}`
