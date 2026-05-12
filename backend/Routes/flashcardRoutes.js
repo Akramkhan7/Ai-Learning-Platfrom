@@ -11,10 +11,10 @@ import protect from '../middleware/auth.js'
 const router = express.Router();
 router.use(protect);
 
-router.get('/',getAllFlashcardSets);
-router.get('/:cardId/review', reviewFlashcard);
-router.get('/:cardId/star', toggleStarFlashcard);
-router.get('/:documentId', getFlashcards);
+router.get('/', getAllFlashcardSets);
+router.get('/document/:documentId', getFlashcards); // ✅ specific routes FIRST
+router.post('/:cardId/review', reviewFlashcard);     // ✅ POST to match service
+router.patch('/:cardId/star', toggleStarFlashcard);  // ✅ PATCH, not GET
 router.delete('/:id', deleteFlashcardSet);
 
 export default router;

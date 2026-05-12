@@ -49,7 +49,7 @@ export const getQuizById = async (req, res, next) => {
 //POST/api/quizzes/:id/submit
 export const submitQuiz = async (req, res, next) => {
   try {
-    const { answers } = req.body;
+    const answers = req.body.answers || req.body.answer;
     if (!Array.isArray(answers)) {
       return res.status(400).json({
         success: false,
@@ -69,7 +69,7 @@ export const submitQuiz = async (req, res, next) => {
       });
     }
 
-    if (quiz.CompletedAt) {
+    if (quiz.completedAt) {
       return res.status(400).json({
         success: false,
         message: "Quiz already completed",
@@ -80,30 +80,67 @@ export const submitQuiz = async (req, res, next) => {
     const userAnswers = [];
 
     answers.forEach((answer) => {
-      const { questionIndex, selectAnswer } = answer;
+      const questionIndex = Number(answer.questionIndex);
+      const selectAnswer = answer.selectAnswer ?? answer.selectedAnswer;
 
-      if (questionIndex < quiz.questions.length) {
+      console.log("Processing answer:", { questionIndex, selectAnswer });
+      console.log("Question:", quiz.questions[questionIndex]);
+
+      if (
+        Number.isInteger(questionIndex) &&
+        questionIndex >= 0 &&
+        questionIndex < quiz.questions.length &&
+        typeof selectAnswer !== "undefined"
+      ) {
         const question = quiz.questions[questionIndex];
-        const isCorrect = selectAnswer === question.correctAnswer;
+        const selectedOptionIndex = Number(selectAnswer);
+        
+        console.log("Selected Option Index:", selectedOptionIndex);
+        console.log("Options:", question.options);
+        console.log("Correct Answer:", question.correctAnswer);
 
-        if (isCorrect) correctCount++;
+        if (
+          Number.isInteger(selectedOptionIndex) &&
+          selectedOptionIndex >= 0 &&
+          selectedOptionIndex < question.options.length
+        ) {
+          const selectedOptionText = question.options[selectedOptionIndex]?.trim();
+          const correctAnswerText = question.correctAnswer?.trim();
+          const isCorrect = selectedOptionText === correctAnswerText;
 
-        userAnswers.push({
-          questionIndex,
-          selectAnswer,
-          isCorrect,
-          createdAt: new Date(),
-        });
+          console.log(
+            `Comparing "${selectedOptionText}" with "${correctAnswerText}" = ${isCorrect}`
+          );
+
+          if (isCorrect) correctCount++;
+
+          userAnswers.push({
+            questionIndex,
+            selectedAnswer: Number(selectAnswer),
+            isCorrect,
+            answeredAt: new Date(),
+          });
+        } else {
+          console.log("Invalid option index:", selectedOptionIndex);
+        }
       }
     });
 
+    if (userAnswers.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid answers provided",
+      });
+    }
+
     //calculate score
-    const score = Math.round(correctCount / quiz.totalQuestions) * 100;
+    const score = Math.round((correctCount / quiz.totalQuestions) * 100);
 
     //Update quiz
     quiz.userAnswers = userAnswers;
     quiz.score = score;
     quiz.completedAt = new Date();
+    await quiz.save();
 
     res.status(200).json({
       success: true,
@@ -155,7 +192,7 @@ export const getQuizResults = async (req, res, next) => {
         question: question.question,
         options: question.options,
         correctAnswer: question.correctAnswer,
-        selectAnswer: userAnswer?.selectedAnswer || null,
+        selectedAnswer: userAnswer?.selectedAnswer || null,
         isCorrect: userAnswer?.isCorrect || null,
         explanation: question.explanation,
       };

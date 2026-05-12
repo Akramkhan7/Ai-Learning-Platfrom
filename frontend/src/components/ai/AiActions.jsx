@@ -19,7 +19,7 @@ const [modalContent, setModalContent] = useState("");
     setLoadingAction("summary");
     try {
       const { summary, title } = await aiService.generateSummary(documentId);
-      
+      console.log("SUMMARY->>>>>>",summary);
       setModalContent(summary)
       setModalTitle(title);
       toast.success("Summary Generated");

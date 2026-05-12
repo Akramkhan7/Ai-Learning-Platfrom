@@ -31,7 +31,7 @@ const generateSummary = async (documentId) => {
     const response = await axiosInstance.post(API_PATHS.AI.GENERATE_SUMMARY, {
       documentId,
     });
-    
+    console.log("RESPONSE SUMMARY->>>",response);
     return response.data?.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to generate summary" };

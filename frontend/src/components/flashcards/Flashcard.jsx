@@ -48,6 +48,7 @@ if (!flashcard) return null;
               }}
             >
               <Star
+              className="w-4 h-4"
                 strokeWidth={2}
                 fill={flashcard.isStarred ? 'currentColor' : 'none'}
               />
@@ -89,6 +90,7 @@ if (!flashcard) return null;
               }`}
             >
               <Star
+               className="w-4 h-4"
                 strokeWidth={2}
                 fill={flashcard.isStarred ? 'currentColor' : 'none'}
               />

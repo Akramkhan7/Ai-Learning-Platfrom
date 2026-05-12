@@ -72,7 +72,7 @@ export const reviewFlashcard = async (req, res, next) => {
 
     //update review info
 
-    flashcardSet.cards[cardIndex].lastReviwed = new Date();
+    flashcardSet.cards[cardIndex].lastReviewed = new Date();
     flashcardSet.cards[cardIndex].reviewCount += 1;
     await flashcardSet.save();
 

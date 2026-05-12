@@ -42,7 +42,8 @@ const Header = ({ toggleSidebar }) => {
               {/* User Info */}
               <div className="flex flex-col">
                 <p className="text-sm font-semibold">
-                  {user?.name || "User"}
+                
+                  {user?.username || "User"}
                 </p>
                 <p className="text-xs text-slate-500">
                   {user?.email || "user@example.com"}

@@ -22,7 +22,7 @@ const QuizResultPage = () => {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const data = await quizService.getQuizResults(quizId);
+        const data = await quizService.getQuizResult(quizId);
         setResults(data);
       } catch (error) {
         toast.error("Failed to fetch quiz results.");
@@ -157,10 +157,10 @@ const QuizResultPage = () => {
         </div>
 
         {detailedResults.map((result, index) => {
-          const userAnswerIndex = result.options.findIndex(
-            (opt) => opt === result.selectedAnswer
-          );
+          // selectedAnswer is already the index (number)
+          const userAnswerIndex = result.selectedAnswer;
 
+          // correctAnswer is a string value, find its index
           const correctAnswerIndex = result.options.findIndex(
             (opt) => opt === result.correctAnswer
           );
@@ -257,14 +257,14 @@ const QuizResultPage = () => {
 
 
       <div className="mt-8 flex justify-center">
-        <Link to={`/documents${quiz.document._id}`} >
-        <button className="group relative px-8 h-12 bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 active:scale-95 overflow-hidden">
-        <span className="relative z-10 flex items-center ">
-          <ArrowLeft className="w-4 h-4  group-hover:-translate-x-1 transition-transform duration-200" strokeWidth={2}/>
-          Return to Document
-        </span>
-        <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-        </button>
+        <Link to={`/documents/${quiz.document?._id}`}>
+          <button className="group relative px-8 h-12 bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 active:scale-95 overflow-hidden">
+            <span className="relative z-10 flex items-center ">
+              <ArrowLeft className="w-4 h-4  group-hover:-translate-x-1 transition-transform duration-200" strokeWidth={2}/>
+              Return to Document
+            </span>
+            <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+          </button>
         </Link>
       </div>
     </div>

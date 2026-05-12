@@ -17,18 +17,17 @@ const getQuizById = async (quizId) => {
     const res = await axiosInstance.get(
       API_PATHS.QUIZZES.GET_QUIZ_BY_ID(quizId)
     );
-    console.log("RES_______",res);
     return res.data;
   } catch (err) {
     throw err.response?.data || { message: "Failed to fetch quiz" };
   }
 };
 
-const submitQuiz = async (quizId, answer) => {
+const submitQuiz = async (quizId, answers) => {
   try {
     const res = await axiosInstance.post(
       API_PATHS.QUIZZES.SUBMIT_QUIZ(quizId),
-      { answer }
+      { answers }
     );
     return res.data;
   } catch (err) {

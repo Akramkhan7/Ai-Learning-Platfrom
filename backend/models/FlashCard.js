@@ -28,7 +28,7 @@ const flashcardSchema = new Schema({
         enum: ["easy", "medium", "hard"],
         default: "medium",
       },
-      lastReviwed: {
+      lastReviewed: {
         type: String,
         default: null,
       },

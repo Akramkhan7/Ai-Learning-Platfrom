@@ -33,7 +33,7 @@ const quizSchema = new Schema({
             type : String,
             required : true,
         },
-        explaination :{
+        explanation :{
             type : String,
             default : '',
         },

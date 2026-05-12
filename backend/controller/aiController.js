@@ -150,8 +150,10 @@ export const generateSummary = async (req, res, next) => {
       });
     }
 
+    const document = await Document.findById(documentId);
+
     const summary = await geminiService.generateSummary(
-      JSON.stringify(data, null, 2),
+      JSON.stringify(document, null, 2),
     );
 
     res.status(201).json({

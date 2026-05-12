@@ -27,10 +27,10 @@ const QuizManager = ({documentId}) => {
     const fetchQuizzes = async() =>{
         setLoading(true);
         try{
-            const data = await quizService.getQuizzesForDocument(documentId)
-            setQuizzes(data)
+            const response = await quizService.getQuizzesForDocument(documentId)
+            setQuizzes(response.data || [])
         }catch(error){
-            toast.error('Failed to fetch quizzes1');
+            toast.error('Failed to fetch quizzes');
             console.log(error);
         }finally{
             setLoading(false);
@@ -134,7 +134,7 @@ const QuizManager = ({documentId}) => {
         type="number"
         value={numQuestion}
         onChange={(e) =>
-          setNumQuestions(Math.max(1, parseInt(e.target.value) || 1))
+          setNumQuestion(Math.max(1, parseInt(e.target.value) || 1))
         }
         min="1"
         required

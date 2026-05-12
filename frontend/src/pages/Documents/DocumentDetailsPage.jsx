@@ -11,13 +11,13 @@ import ChatInterface from "../../components/chat/ChatInterface";
 import AiActions from "../../components/ai/AiActions";
 import FlashCard from "../../components/flashcards/Flashcard";
 import FlashcardManager from "../../components/flashcards/FlashcardManger";
-import QuizManager from "../../pages/quizzess/QuizManager"
+import QuizManager from "../../pages/quizzess/QuizManager";
 
 const DocumentDetailsPage = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [document, setDocument] = useState([]);
-  const [activeTab, setActiveTab] = useState("content");
+  const [document, setDocument] = useState();
+  const [activeTab, setActiveTab] = useState("Content");
 
   useEffect(() => {
     const fetchDOc = async () => {
@@ -52,7 +52,8 @@ const DocumentDetailsPage = () => {
 
   const renderContent = () => {
     if (loading) {
-      return <Spinner />;
+      return;
+      <Spinner />;
     }
     if (!document || !document.data || !document.data.filePath) {
       return <div className="">PDF file not found!</div>;
@@ -91,26 +92,30 @@ const DocumentDetailsPage = () => {
   };
 
   const renderChat = () => {
-    return <ChatInterface />
+    return <ChatInterface />;
   };
 
   const renderAiActions = () => {
-    return <AiActions />
+    return <AiActions />;
   };
 
   const renderFlashCardsTabs = () => {
-    return <FlashcardManager documentId={id}/>
+    return <FlashcardManager documentId={id} />;
   };
 
   const renderQuizzesTabs = () => {
-    return <QuizManager documentId={id} />
+    return <QuizManager documentId={id} />;
   };
 
   const tabs = [
     { name: "Content", label: "Content", content: renderContent() },
     { name: "Chat", label: "Chat", content: renderChat() },
     { name: "AI Actions", label: "Ai Action", content: renderAiActions() },
-    { name: "Flashcards", label: "Flashcards", content: renderFlashCardsTabs() },
+    {
+      name: "Flashcards",
+      label: "Flashcards",
+      content: renderFlashCardsTabs(),
+    },
     { name: "Quizzes", label: "Quizzes", content: renderQuizzesTabs() },
   ];
 
@@ -124,15 +129,17 @@ const DocumentDetailsPage = () => {
   return (
     <div className="">
       <div className="mb-4">
-        <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors">
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+        >
           <ArrowLeft size={16} />
           Back to Documents
         </Link>
       </div>
 
       <PageHeader title={document.data.title} />
-        <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
-      
+      <Tabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   );
 };

@@ -59,14 +59,14 @@ const FlashcardManager = ({ documentId }) => {
   };
 
   const handleNextCard = () => {
-    if (selectedSet) {
+    if (selectedSet?.cards?.length) {
       handleReview(currCardIndex);
       setCurrCardIndex((prev) => (prev + 1) % selectedSet.cards.length);
     }
   };
 
   const handlePreviousCard = () => {
-    if (selectedSet) {
+    if (selectedSet?.cards?.length) {
       handleReview(currCardIndex);
       setCurrCardIndex(
         (prev) =>
@@ -76,39 +76,54 @@ const FlashcardManager = ({ documentId }) => {
   };
 
   const handleReview = async (index) => {
-    const currentCard = selectedSet?.cards[index];
-    if (!currentCard) return;
-    try {
-      await flashcardService.reviewFlashcard(currentCard._id, index);
-      toast.success("Flashcard reviewed successfully");
-    } catch (error) {
-      toast.error("Failed to review flashcard1.");
-    }
-  };
+  const currentCard = selectedSet?.cards?.[index];
+  if (!currentCard) return;
+  try {
+    await flashcardService.reviewFlashcard(currentCard._id);
+
+    // ✅ Update local state so FlashcardSetCard reflects progress
+    const updatedSets = flashcardSets.map((set) => {
+      if (set._id === selectedSet._id) {
+        const updatedCards = set.cards.map((card) =>
+          card._id === currentCard._id
+            ? { ...card, lastReviwed: new Date().toISOString() }
+            : card
+        );
+        return { ...set, cards: updatedCards };
+      }
+      return set;
+    });
+
+    setFlashcardSets(updatedSets);
+    setSelectedSet(updatedSets.find((set) => set._id === selectedSet._id));
+  } catch (error) {
+    toast.error("Failed to review flashcard.");
+  }
+};
 
   const handleToggleStar = async (cardId, cardIndex) => {
-      console.log("handleToggleStar called:", cardId, cardIndex); // ← check
-    try {
-     await flashcardService.toggleStar(cardId, cardIndex);
+  if (!selectedSet?.cards) return;
+  try {
+    await flashcardService.toggleStar(cardId, cardIndex);
 
-      const updateSets = flashcardSets.map((set) => {
-        if (set._id === selectedSet._id) {
-          const updatedCards = set.cards.map((card) =>
-            card._id === cardId
-              ? { ...card, isStarred: !card.isStarred }
-              : card,
-          );
-          return { ...set, cards: updatedCards };
-        }
-        return set;
-      });
-      setFlashcardSets(updateSets);
-      setSelectedSet(updateSets.find((set) => set._id === selectedSet._id));
-      toast.success("Flashcard starred status successfully");
-    } catch (error) {
-      toast.error("Failed to update star status");
-    }
-  };
+    const updatedSets = flashcardSets.map((set) => {
+      if (set._id === selectedSet._id) {
+        const updatedCards = set.cards.map((card, idx) =>
+          // ✅ match by index, not card._id
+          idx === cardIndex ? { ...card, isStarred: !card.isStarred } : card
+        );
+        return { ...set, cards: updatedCards };
+      }
+      return set;
+    });
+
+    setFlashcardSets(updatedSets);
+    setSelectedSet(updatedSets.find((set) => set._id === selectedSet._id));
+    toast.success("Flashcard starred successfully");
+  } catch (error) {
+    toast.error("Failed to update star status");
+  }
+};
 
   const handleDeleteRequest = (e, set) => {
     e.stopPropagation();
@@ -139,8 +154,8 @@ const FlashcardManager = ({ documentId }) => {
 
   // FIX: was returning a plain string
   const renderFlashcardViewer = () => {
-    if (!selectedSet) return null;
-    const currentCard = selectedSet.cards[currCardIndex];
+    if (!selectedSet?.cards?.length) return null;
+    const currentCard = selectedSet.cards?.[currCardIndex];
 
     return (
       <div className="flex flex-col gap-6">
@@ -154,7 +169,7 @@ const FlashcardManager = ({ documentId }) => {
             Back to sets
           </button>
           <span className="text-sm font-medium text-slate-400">
-            {currCardIndex + 1} / {selectedSet.cards.length}
+            {currCardIndex + 1} / {selectedSet.cards?.length || 0}
           </span>
         </div>
 
@@ -163,7 +178,7 @@ const FlashcardManager = ({ documentId }) => {
           <div
             className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-300"
             style={{
-              width: `${((currCardIndex + 1) / selectedSet.cards.length) * 100}%`,
+              width: `${((currCardIndex + 1) / (selectedSet.cards?.length || 1)) * 100}%`,
             }}
           />
         </div>
@@ -183,7 +198,7 @@ const FlashcardManager = ({ documentId }) => {
         <div className="flex items-center justify-center gap-4">
           <button
             onClick={handlePreviousCard}
-            disabled={selectedSet.cards.length <= 1}
+            disabled={selectedSet.cards?.length <= 1}
             className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-5 h-5" strokeWidth={2} />
@@ -195,7 +210,7 @@ const FlashcardManager = ({ documentId }) => {
 
           <button
             onClick={handleNextCard}
-            disabled={selectedSet.cards.length <= 1}
+            disabled={selectedSet.cards?.length <= 1}
             className="inline-flex items-center justify-center w-11 h-11 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronRight className="w-5 h-5" strokeWidth={2} />
@@ -287,7 +302,6 @@ const FlashcardManager = ({ documentId }) => {
           {flashcardSets.map((set) => (
             <div
               key={set._id}
-              // FIX: was onClick={()=>handleSelectSet} — missing (set) argument
               onClick={() => handleSelectSet(set)}
               className="relative group flex items-center gap-4 p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-emerald-200 hover:shadow-md hover:shadow-emerald-500/8 cursor-pointer transition-all duration-200 active:scale-[0.99]"
             >
@@ -300,7 +314,7 @@ const FlashcardManager = ({ documentId }) => {
               </button>
 
               {/* Icon */}
-              <div className="flex-shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-100 border border-emerald-100">
+              <div className="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-emerald-50 to-teal-100 border border-emerald-100">
                 <Brain className="w-6 h-6 text-emerald-600" strokeWidth={2} />
               </div>
 
@@ -318,7 +332,7 @@ const FlashcardManager = ({ documentId }) => {
               {/* Card count badge */}
               <div className="ml-auto pr-8 flex-shrink-0">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-semibold">
-                  {set.cards.length} {set.cards.length === 1 ? "card" : "cards"}
+                  {set.cards?.length || 0} {set.cards?.length === 1 ? "card" : "cards"}
                 </span>
               </div>
             </div>

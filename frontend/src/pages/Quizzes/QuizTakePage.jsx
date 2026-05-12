@@ -20,6 +20,7 @@ const [submitting, setSubmitting] = useState(false);
 
 useEffect(()=>{
   const fetchQuiz = async() =>{
+    setLoading(true);
     try{
       const res = await quizService.getQuizById(quizId)
       setQuiz(res.data)
@@ -28,13 +29,12 @@ useEffect(()=>{
       console.log(error)
     }finally{
       setLoading(false);
-
     }
   }
-  quizId();
+  if(quizId) fetchQuiz();
 },[quizId])
 
-const handleOptionChange = ({questionId, optionIndex}) =>{
+const handleOptionChange = (questionId, optionIndex) =>{
 setSelectedAnswer((prev)=>({
   ...prev,
   [questionId] : optionIndex,
@@ -42,39 +42,42 @@ setSelectedAnswer((prev)=>({
 }
 
 
-const handleNextOption = () =>{
+const handleNextQuestion = () =>{
   if(currentQuestionIndex < quiz.questions.length-1){
     setCurrentQuestionIndex((prev) =>prev + 1)
   }
 }
 
-const handlePreviousOption = () =>{
+const handlePreviousQuestion = () =>{
   if(currentQuestionIndex > 0){
     setCurrentQuestionIndex((prev) =>prev - 1)
   }
 }
 
 const handleSubmitQuiz = async() =>{
-setSubmitting(true);
-try{
-  const formattedAnswer = Object.keys(selectedAnswer).map(questionId =>{
-    const question = quiz.questions.find((q) => q._id === questionId);
-    const questionIndex = quiz.questions.findIndex((q) => q._id === questionId);
-    const optionIndex = selectedAnswer[questionId];
-    const selectedAnswer = question.options[questionIndex];
-    return {questionIndex, selectedAnswer};
+  setSubmitting(true);
+  try{
+    const formattedAnswer = quiz.questions
+      .map((question, index) => ({
+        questionIndex: index,
+        selectedAnswer: selectedAnswer[question._id],
+      }))
+      .filter((answer) => typeof answer.selectedAnswer === 'number');
 
-  })
+    if (formattedAnswer.length === 0) {
+      toast.error('Please select at least one answer before submitting.');
+      setSubmitting(false);
+      return;
+    }
 
-  await quizService.submitQuiz(quizId, formattedAnswer);
-  toast.success('Quiz submitting successfully');
-  navigate(`/quizzes/${quizId}/results`);
-
-}catch(error){
-toast.error('Failed to submit quiz || error.message');
-}finally{
-  setSubmitting(false);
-}
+    await quizService.submitQuiz(quizId, formattedAnswer);
+    toast.success('Quiz submitted successfully');
+    navigate(`/quizzes/${quizId}/results`);
+  }catch(error){
+    toast.error(error.message || 'Failed to submit quiz');
+  }finally{
+    setSubmitting(false);
+  }
 }
 
 if(loading){
@@ -86,16 +89,18 @@ if(loading){
 }
 
 if(!quiz || quiz.questions.length===0){
- <div className=' flex items-center justify-center min-h-[60vh]'>
-  <div className='text-center'>
-    <p className='text-slate-600 text-lg'>Quiz not found or has no questions.</p>
-  </div>
-</div>
+  return (
+    <div className=' flex items-center justify-center min-h-[60vh]'>
+      <div className='text-center'>
+        <p className='text-slate-600 text-lg'>Quiz not found or has no questions.</p>
+      </div>
+    </div>
+  )
 }
 
 const currentQuestion = quiz.questions[currentQuestionIndex];
-const isAnswered = selectedAnswer.hasOwnProperty[currentQuestion._id];
-const answerCount = Object.keys(selectedAnswer).length;
+const isAnswered = selectedAnswer.hasOwnProperty(currentQuestion._id);
+const answeredCount = Object.keys(selectedAnswer).length;
 
 
   return (
@@ -145,7 +150,7 @@ const answerCount = Object.keys(selectedAnswer).length;
         <div className="space-y-3">
           {currentQuestion.options.map((option, index) => {
             const isSelected =
-              selectedAnswers[currentQuestion._id] === index;
+              selectedAnswer[currentQuestion._id] === index;
 
             return (
               <label

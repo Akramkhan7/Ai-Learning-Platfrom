@@ -93,6 +93,7 @@ const ChatInterface = () => {
         {!isUser && (
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
+
           </div>
         )}
 
@@ -129,8 +130,21 @@ const ChatInterface = () => {
         <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-emerald-100 to-teal-100 flex items-center justify-center mb-4">
           <MessageSquare strokeWidth={2} className="w-7 h-7 text-emerald-500" />
         </div>
-        <Spinner />
-        <p className="text-sm text-slate-500 mt-3 font-medium">
+        <div className="flex gap-2">
+          <span
+            className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"
+            style={{ animationDelay: "0ms" }}
+          ></span>
+          <span
+            className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"
+            style={{ animationDelay: "150ms" }}
+          ></span>
+          <span
+            className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"
+            style={{ animationDelay: "300ms" }}
+          ></span>
+        </div>
+        <p className="text-sm text-slate-500 mt-4 font-medium">
           Loading chat history...
         </p>
       </div>
@@ -165,21 +179,19 @@ const ChatInterface = () => {
             <div className="w-9 h-9 rounded-xl bg-linear-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/25 flex items-center justify-center shrink-0">
               <Sparkles className="w-4 h-4 text-white" strokeWidth={2} />
             </div>
-            <div className="flex gap-2 px-4 py-3 rounded-xl rounded-bl-md bg-white border-slate-200/60">
-              <div className="flex gap-2">
-                <span
-                  className="w-2 h-2 text-slate-400 rounded-xl animate-bounce"
-                  style={{ animationDelay: "0ms" }}
-                ></span>
-                <span
-                  className="w-2 h-2 text-slate-400 rounded-xl animate-bounce"
-                  style={{ animationDelay: "150ms" }}
-                ></span>
-                <span
-                  className="w-2 h-2 text-slate-400 rounded-xl animate-bounce"
-                  style={{ animationDelay: "300ms" }}
-                ></span>
-              </div>
+            <div className="flex items-center gap-1">
+              <span
+                className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                style={{ animationDelay: "0ms" }}
+              ></span>
+              <span
+                className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                style={{ animationDelay: "150ms" }}
+              ></span>
+              <span
+                className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"
+                style={{ animationDelay: "300ms" }}
+              ></span>
             </div>
           </div>
         )}

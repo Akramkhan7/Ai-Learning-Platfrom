@@ -28,15 +28,17 @@ export const API_PATHS = {
 
   FLASHCARDS: {
     GET_ALL_FLASHCARD_SETS: "/flashcards",
-    GET_FLASHCARDS_FOR_DOC: (documentId) => `/quizzes/document/${documentId}`,
+    GET_FLASHCARDS_FOR_DOC: (documentId) => `/flashcards/document/${documentId}`,
+    
+    
     REVIEW_FLASHCARD: (cardId) => `/flashcards/${cardId}/review`,
     TOGGLE_STAR: (cardId) => `/flashcards/${cardId}/star`,
     DELETE_FLASHCARD_SET: (id) => `/flashcards/${id}`,
   },
 
   QUIZZES: {
-    GET_QUIZZES_FOR_DOC: (documentId) => `/quizzes/${documentId}`,
-    GET_QUIZ_BY_ID: (id) => `/quizzes/quiz/${id}`,
+    GET_QUIZZES_FOR_DOC: (documentId) => `/quizzes/document/${documentId}`,
+    GET_QUIZ_BY_ID: (id) => `/quizzes/${id}`,
     SUBMIT_QUIZ: (id) => `/quizzes/${id}/submit`,
     GET_QUIZ_RESULTS: (id) => `/quizzes/${id}/results`,
     DELETE_QUIZ: (id) => `/quizzes/${id}`,
@@ -46,3 +48,4 @@ export const API_PATHS = {
     GET_DASHBOARD: "/progress/dashboard",
   },
 };
+
