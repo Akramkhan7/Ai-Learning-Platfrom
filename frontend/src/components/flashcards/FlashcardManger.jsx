@@ -45,6 +45,9 @@ const FlashcardManager = ({ documentId }) => {
     }
   }, [documentId]);
 
+
+
+
   const handleGenerateFlashcards = async () => {
     setGenerating(true);
     try {
@@ -121,6 +124,7 @@ const FlashcardManager = ({ documentId }) => {
     setSelectedSet(updatedSets.find((set) => set._id === selectedSet._id));
     toast.success("Flashcard starred successfully");
   } catch (error) {
+    console.log("ERROR -<",error);
     toast.error("Failed to update star status");
   }
 };

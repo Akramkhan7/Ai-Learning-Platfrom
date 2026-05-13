@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Star, RotateCcw } from "lucide-react"
 
 const FlashCard = ({ flashcard, onToggleStar, currCardIndex }) => {
@@ -8,6 +8,11 @@ const FlashCard = ({ flashcard, onToggleStar, currCardIndex }) => {
     setIsFlipped(!isFlipped);
   };
 
+
+    useEffect(()=>{
+    setIsFlipped(false);
+  },[currCardIndex])
+  
 if (!flashcard) return null;
   return (
     

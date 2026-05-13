@@ -66,7 +66,7 @@ const explainConcept = async (documentId, concept) => {
 const getChatHistory = async (documentId) => {
   try {
     const response = await axiosInstance.post(
-      API_PATHS.AI.GET_CHAT_HISTORY, // ✅ string
+      API_PATHS.AI.GET_CHAT_HISTORY,
       { documentId }
     );
     return response.data;

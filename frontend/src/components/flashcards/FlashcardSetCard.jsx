@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BookOpen,Sparkles,TrendingUp } from 'lucide-react'
+import { BookOpen,Sparkles,TrendingUp,CheckCheck} from 'lucide-react'
 import moment from 'moment';
 
 
@@ -87,16 +87,32 @@ const FlashcardSetCard = ({flashcardSet}) => {
   <button
     onClick={(e) => {
       e.stopPropagation();
-      handleStudyNow();
+      if (progressPercentage !== 100) handleStudyNow();
     }}
-    className="group/btn relative w-full h-11 bg-linear-to-r from-emerald-50 to-teal-100 hover:from-emerald-600 hover:to-teal-600 text-emerald-700 hover:text-white rounded-lg overflow-hidden"
+    disabled={progressPercentage === 100}
+    className={`group/btn relative w-full h-11 rounded-lg overflow-hidden font-semibold text-sm transition-all duration-200
+      ${progressPercentage === 100
+        ? 'bg-linear-to-r from-emerald-700 to-teal-700  text-white  cursor-not-allowed opacity-80'
+        : 'bg-linear-to-r from-emerald-50 to-teal-100 hover:from-emerald-600 hover:to-teal-600 text-emerald-700 hover:text-white cursor-pointer'
+      }`}
   >
-    <span className="relative z-10 flex items-center justify-center gap-2 text-white font-semibold text-sm rounded-xl  transition-all duration-200 active:scale-95 overflow-hidden">
-      <Sparkles className="w-4 h-4" strokeWidth={2.5} />
-      Study Now
+    <span className="relative z-10 flex items-center justify-center gap-2">
+      {progressPercentage === 100 ? (
+        <>
+          <CheckCheck className="w-4 h-4" strokeWidth={3} />
+          Completed
+        </>
+      ) : (
+        <>
+          <Sparkles className="w-4 h-4" strokeWidth={2.5} />
+          Study Now
+        </>
+      )}
     </span>
 
-    <div className="absolute inset-0 bg-linear-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+    {progressPercentage !== 100 && (
+      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+    )}
   </button>
 </div>
 

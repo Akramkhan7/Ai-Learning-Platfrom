@@ -11,7 +11,6 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         const data = await progressService.getDashboardData();
-        console.log("Dashboard data:", data);
 
         setDashboard(data.data);
       } catch (err) {
@@ -25,7 +24,6 @@ const Dashboard = () => {
   }, []);
 
   if (loading) return <Spinner />;
-  console.log("Dashboard:", dashboard);
 
   if (!dashboard || !dashboard.overview) {
     return (
@@ -79,7 +77,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen relative p-6">
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px] opacity-30 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] opacity-30 pointer-events-none"></div>
 
       {/* Heading */}
       <div className="mb-6 relative">
